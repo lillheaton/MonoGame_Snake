@@ -61,43 +61,12 @@ namespace MonoGameTest_V1
             // TODO: Unload any non ContentManager content here
         }
 
-        private KeyboardState oldState;
-        private int snakeUpdate = 0;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            KeyboardState newState = Keyboard.GetState();
-
-            if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
-            {
-                snake.Move(Direction.West);
-            }
-
-            if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
-            {
-                snake.Move(Direction.East);
-            }
-
-            if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
-            {
-                snake.Move(Direction.South);
-            }
-
-            if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
-            {
-                snake.Move(Direction.North);
-            }
-
-            oldState = newState;
-
-            snakeUpdate++;
-            if (snakeUpdate % 10 == 0)
-            {
-                snake.Update();
-                snakeUpdate = 0;
-            }
+            snake.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -108,7 +77,8 @@ namespace MonoGameTest_V1
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            Color clearColor = Color.FromNonPremultiplied(221,221,221, 255);
+            GraphicsDevice.Clear(clearColor);
             this.spriteBatch.Begin();
 
             snake.Draw();

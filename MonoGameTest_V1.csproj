@@ -35,7 +35,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
+    <Compile Include="Direction.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GraphicsHelper.cs" />
     <Compile Include="Program.cs" />
