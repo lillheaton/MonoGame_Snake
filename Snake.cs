@@ -68,19 +68,11 @@ namespace MonoGameTest_V1
 
         public void Update()
         {
-            var oldList = BodyParts.Select(
-                s =>
-                    {
-                        var part = new SnakePart(s.Position);
-                        part.Direction = s.Direction;
-                        return part;
-                    }).ToList();
-
             BodyParts[0].Position = BodyParts[0].Position + MoveVector;
-
-            for (int i = 1; i < BodyParts.Count; i++)
+            
+            for (int i = BodyParts.Count - 1; i > 0; i--)
             {
-                BodyParts[i].Position = oldList[i - 1].Position;
+                BodyParts[i].Position = BodyParts[i - 1].Position;
             }
         }
 
