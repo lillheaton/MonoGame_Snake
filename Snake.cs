@@ -10,22 +10,28 @@ namespace MonoGameTest_V1
 {
     public class Snake
     {
+        /// <summary>
+        /// The size of the rectangle for the graphics
+        /// </summary>
+        public const int SnakeBodySize = 20;
+
         private SpriteBatch SpriteBatch { get; set; }
         private List<SnakePart> BodyParts { get; set; }
+        private SnakeFood SnakeFood { get; set; }
 
-        protected SnakeDirection NextMoveDirection { get; set; }
-        protected SnakeDirection CurrentMoveDirection { get; set; }
+        private SnakeDirection NextMoveDirection { get; set; }
+        private SnakeDirection CurrentMoveDirection { get; set; }
 
-
-        protected TimeSpan lastUpdateTime;
-        protected TimeSpan updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
+        private TimeSpan lastUpdateTime;
+        private readonly TimeSpan updatesPerMilliseconds;
 
         private KeyboardState oldState;
 
 
-        public Snake(SpriteBatch spriteBatch)
+        public Snake(SpriteBatch spriteBatch, SnakeFood snakeFood)
         {
             this.SpriteBatch = spriteBatch;
+            this.SnakeFood = snakeFood;
 
             BodyParts = new List<SnakePart>();
             for (int i = 0; i < 10; i++)
@@ -35,6 +41,7 @@ namespace MonoGameTest_V1
             BodyParts.Reverse();
 
             NextMoveDirection = CurrentMoveDirection = SnakeDirection.East;
+            updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
         }
 
         public void Move(SnakeDirection direction)
@@ -88,7 +95,19 @@ namespace MonoGameTest_V1
 
         public void UpdatePosition()
         {
-            BodyParts[0].Position = BodyParts[0].Position + NextMoveDirection.GetVector();
+            // Calculate next position
+            var newPosition = BodyParts[0].Position + NextMoveDirection.GetVector();
+
+            // Check if next position contains food
+            if (SnakeFood.FoodList.Contains(newPosition))
+            {
+                SnakeFood.FoodList.Remove(newPosition);
+                BodyParts.Insert(0, new SnakePart(newPosition));
+            }
+            else
+            {
+                BodyParts[0].Position = newPosition;    
+            }
 
             for (int i = BodyParts.Count - 1; i > 0; i--)
             {
@@ -103,13 +122,13 @@ namespace MonoGameTest_V1
             foreach (var snakePart in BodyParts)
             {
                 var rect = new Rectangle();
-                rect.Width = 20;
-                rect.Height = 20;
-                rect.X = (int)snakePart.Position.X * 20;
-                rect.Y = (int)snakePart.Position.Y * 20;
+                rect.Width = SnakeBodySize;
+                rect.Height = SnakeBodySize;
+                rect.X = (int)snakePart.Position.X * SnakeBodySize;
+                rect.Y = (int)snakePart.Position.Y * SnakeBodySize;
 
                 Color snakeColor = Color.FromNonPremultiplied(255,65,54, 255);
-                GraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
+                RectangleGraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
             }
         }
     }

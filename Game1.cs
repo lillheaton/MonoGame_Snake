@@ -22,6 +22,7 @@ namespace MonoGameTest_V1
         SpriteBatch spriteBatch;
 
         private Snake snake;
+        private SnakeFood snakeFood;
 
         public Game1() : base()
         {
@@ -36,7 +37,10 @@ namespace MonoGameTest_V1
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize()
-        {            
+        {
+            this.graphics.PreferredBackBufferWidth = ScreenManager.Width;
+            this.graphics.PreferredBackBufferHeight = ScreenManager.Height;
+
             base.Initialize();
         }
 
@@ -49,7 +53,10 @@ namespace MonoGameTest_V1
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            snake = new Snake(spriteBatch);
+            ScreenManager.Instance.LoadContentManager(Content);
+
+            snakeFood = new SnakeFood(spriteBatch);
+            snake = new Snake(spriteBatch, snakeFood);
         }
 
         /// <summary>
@@ -58,6 +65,7 @@ namespace MonoGameTest_V1
         /// </summary>
         protected override void UnloadContent()
         {
+            ScreenManager.Instance.Content.Unload();
             // TODO: Unload any non ContentManager content here
         }
 
@@ -67,6 +75,7 @@ namespace MonoGameTest_V1
                 Exit();
 
             snake.Update(gameTime);
+            snakeFood.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -82,6 +91,9 @@ namespace MonoGameTest_V1
             this.spriteBatch.Begin();
 
             snake.Draw();
+            snakeFood.Draw();
+
+            Debugger.DrawWindowInformation(spriteBatch, graphics);
 
             this.spriteBatch.End();
             base.Draw(gameTime);   

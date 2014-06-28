@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGameTest_V1
 {
-    public static class GraphicsHelper
+    public static class RectangleGraphicsHelper
     {
         private static Texture2D Texture { get; set; }
 
