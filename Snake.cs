@@ -116,10 +116,11 @@ namespace MonoGameTest_V1
 
             this.HandleCollision(newPosition);
 
-            for (int i = BodyParts.Count - 1; i > 0; i--)
+            for (int i = BodyParts.Count - 1; i > 1; i--)
             {
                 BodyParts[i].Position = BodyParts[i - 1].Position;
             }
+            BodyParts.RemoveAt(BodyParts.Count - 1);
 
             CurrentMoveDirection = NextMoveDirection;
         }
@@ -146,10 +147,11 @@ namespace MonoGameTest_V1
             {
                 SnakeFood.FoodList.Remove(newPosition);
                 BodyParts.Insert(0, new SnakePart(newPosition));
+                BodyParts.Insert(0, new SnakePart(newPosition + NextMoveDirection.GetVector()));
             }
             else
             {
-                BodyParts[0].Position = newPosition;
+                BodyParts.Insert(0, new SnakePart(newPosition));
             }
         }
     }
