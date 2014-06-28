@@ -74,9 +74,12 @@ namespace MonoGameTest_V1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            snake.Update(gameTime);
-            snakeFood.Update(gameTime);
-
+            if (GameManager.SnakeAlive)
+            {
+                snake.Update(gameTime);
+                snakeFood.Update(gameTime);    
+            }
+            
             base.Update(gameTime);
         }
 
@@ -92,6 +95,11 @@ namespace MonoGameTest_V1
 
             snake.Draw();
             snakeFood.Draw();
+
+            if (!GameManager.SnakeAlive)
+            {
+                TextGraphicsHelper.DrawText(spriteBatch, "Game Over", "Fonts/MyFont", new Vector2(300, 200), Color.Black, 3);
+            }
 
             Debugger.DrawWindowInformation(spriteBatch, graphics);
 

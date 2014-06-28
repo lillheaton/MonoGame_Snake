@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.Serialization;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -93,30 +94,6 @@ namespace MonoGameTest_V1
             oldState = newState;
         }
 
-        public void UpdatePosition()
-        {
-            // Calculate next position
-            var newPosition = BodyParts[0].Position + NextMoveDirection.GetVector();
-
-            // Check if next position contains food
-            if (SnakeFood.FoodList.Contains(newPosition))
-            {
-                SnakeFood.FoodList.Remove(newPosition);
-                BodyParts.Insert(0, new SnakePart(newPosition));
-            }
-            else
-            {
-                BodyParts[0].Position = newPosition;    
-            }
-
-            for (int i = BodyParts.Count - 1; i > 0; i--)
-            {
-                BodyParts[i].Position = BodyParts[i - 1].Position;
-            }
-
-            CurrentMoveDirection = NextMoveDirection;
-        }
-
         public void Draw()
         {
             foreach (var snakePart in BodyParts)
@@ -129,6 +106,42 @@ namespace MonoGameTest_V1
 
                 Color snakeColor = Color.FromNonPremultiplied(255,65,54, 255);
                 RectangleGraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
+            }
+        }
+
+        private void UpdatePosition()
+        {
+            // Calculate next position
+            var newPosition = BodyParts[0].Position + NextMoveDirection.GetVector();
+
+            this.HandleCollision(newPosition);
+
+            for (int i = BodyParts.Count - 1; i > 0; i--)
+            {
+                BodyParts[i].Position = BodyParts[i - 1].Position;
+            }
+
+            CurrentMoveDirection = NextMoveDirection;
+        }
+
+        private void HandleCollision(Vector2 newPosition)
+        {
+            // Snake should not colide with itself
+            if (BodyParts.Any(s => s.Position == newPosition))
+            {
+                GameManager.SnakeAlive = false;
+                return;
+            }
+
+            // Check if next position contains food
+            if (SnakeFood.FoodList.Contains(newPosition))
+            {
+                SnakeFood.FoodList.Remove(newPosition);
+                BodyParts.Insert(0, new SnakePart(newPosition));
+            }
+            else
+            {
+                BodyParts[0].Position = newPosition;
             }
         }
     }

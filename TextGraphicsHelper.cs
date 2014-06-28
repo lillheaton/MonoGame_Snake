@@ -18,5 +18,11 @@ namespace MonoGameTest_V1
             Font = Font ?? ScreenManager.Instance.Content.Load<SpriteFont>(fontLoation);
             spriteBatch.DrawString(Font, text, position, color);
         }
+
+        public static void DrawText(SpriteBatch spriteBatch, string text, string fontLoation, Vector2 position, Color color, float scale)
+        {
+            Font = Font ?? ScreenManager.Instance.Content.Load<SpriteFont>(fontLoation);
+            spriteBatch.DrawString(Font, text, position, color, 0, new Vector2(0,0), scale, SpriteEffects.None, 0);
+        }
     }
 }
