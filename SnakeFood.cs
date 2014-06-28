@@ -43,7 +43,7 @@ namespace MonoGameTest_V1
                 rect.X = (int)food.X * FoodSize;
                 rect.Y = (int)food.Y * FoodSize;
 
-                Color foodColor = Color.FromNonPremultiplied(255, 65, 54, 255);
+                Color foodColor = Color.FromNonPremultiplied(75, 0, 130, 255);
                 RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, foodColor);
             }
         }
