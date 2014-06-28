@@ -133,6 +133,14 @@ namespace MonoGameTest_V1
                 return;
             }
 
+            // Snake should not go outside of screen
+            if (newPosition.X > (ScreenManager.Width / SnakeBodySize) || newPosition.X < 0
+                || newPosition.Y > (ScreenManager.Height / SnakeBodySize) || newPosition.Y < 0)
+            {
+                GameManager.SnakeAlive = false;
+                return;
+            }
+
             // Check if next position contains food
             if (SnakeFood.FoodList.Contains(newPosition))
             {
