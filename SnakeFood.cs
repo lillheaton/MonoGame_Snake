@@ -50,12 +50,22 @@ namespace MonoGameTest_V1
 
         private void RandomFood()
         {
-            const int X = ScreenManager.Width / FoodSize;
-            const int Y = ScreenManager.Height / FoodSize;
-            var newFood = new Vector2(random.Next(X), random.Next(Y));
-
+            var newFood = this.GenerateUniqueLocation();
             FoodList.Add(newFood);
             Console.WriteLine(newFood);
+        }
+
+        private Vector2 GenerateUniqueLocation()
+        {
+            const int X = ScreenManager.Width / FoodSize;
+            const int Y = ScreenManager.Height / FoodSize;
+            var location = new Vector2(random.Next(X), random.Next(Y));
+
+            if (FoodList.Contains(location))
+            {
+                return this.GenerateUniqueLocation();
+            }
+            return location;
         }
     }
 }
