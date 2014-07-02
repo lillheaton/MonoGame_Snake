@@ -16,7 +16,7 @@ namespace MonoGameTest_V1
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Game
+    public class SnakeGame : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -24,7 +24,7 @@ namespace MonoGameTest_V1
         private Snake snake;
         private SnakeFood snakeFood;
 
-        public Game1() : base()
+        public SnakeGame() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
