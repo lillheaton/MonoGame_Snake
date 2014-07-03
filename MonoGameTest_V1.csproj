@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Debugger.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="NetworkClientHelper.cs" />
     <Compile Include="SnakeGame.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="RectangleGraphicsHelper.cs" />
