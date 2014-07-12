@@ -45,14 +45,7 @@ namespace MonoGameTest_V1
             updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
         }
 
-        public void Move(SnakeDirection direction)
-        {
-            bool isOpposite = direction.isOppositeOf(CurrentMoveDirection);
-            if (!isOpposite)
-            {
-                NextMoveDirection = direction;
-            }
-        }
+        
 
         public void Update(GameTime gameTime)
         {
@@ -71,41 +64,34 @@ namespace MonoGameTest_V1
             KeyboardState newState = Keyboard.GetState();
             GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
             float epsilon = 0.1f;
-            if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left) || gamePad.ThumbSticks.Left.X < -epsilon)
+            if (newState.IsKeyDown(Keys.Left) || gamePad.ThumbSticks.Left.X < -epsilon)
             {
-                Move(SnakeDirection.West);
+                TrySetNextMove(SnakeDirection.West);
             }
 
-            if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right) || gamePad.ThumbSticks.Left.X > epsilon)
+            if (newState.IsKeyDown(Keys.Right) || gamePad.ThumbSticks.Left.X > epsilon)
             {
-                Move(SnakeDirection.East);
+                TrySetNextMove(SnakeDirection.East);
             }
 
-            if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down) || gamePad.ThumbSticks.Left.Y < -epsilon)
+            if (newState.IsKeyDown(Keys.Down) || gamePad.ThumbSticks.Left.Y < -epsilon)
             {
-                Move(SnakeDirection.South);
+                TrySetNextMove(SnakeDirection.South);
             }
 
-            if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up) || gamePad.ThumbSticks.Left.Y > epsilon)
+            if (newState.IsKeyDown(Keys.Up) || gamePad.ThumbSticks.Left.Y > epsilon)
             {
-                Move(SnakeDirection.North);
+                TrySetNextMove(SnakeDirection.North);
             }
 
             oldState = newState;
         }
-
-        public void Draw()
+        public void TrySetNextMove(SnakeDirection direction)
         {
-            foreach (var snakePart in BodyParts)
+            bool isOpposite = direction.isOppositeOf(CurrentMoveDirection);
+            if (!isOpposite)
             {
-                var rect = new Rectangle();
-                rect.Width = SnakeBodySize;
-                rect.Height = SnakeBodySize;
-                rect.X = (int)snakePart.Position.X * SnakeBodySize;
-                rect.Y = (int)snakePart.Position.Y * SnakeBodySize;
-
-                Color snakeColor = Color.FromNonPremultiplied(255,65,54, 255);
-                RectangleGraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
+                NextMoveDirection = direction;
             }
         }
 
@@ -124,6 +110,25 @@ namespace MonoGameTest_V1
 
             CurrentMoveDirection = NextMoveDirection;
         }
+
+
+        public void Draw()
+        {
+            foreach (var snakePart in BodyParts)
+            {
+                int margin = 1;
+                var rect = new Rectangle();
+                rect.Width = SnakeBodySize - (margin * 2);
+                rect.Height = SnakeBodySize -(margin * 2);
+                rect.X = (int)snakePart.Position.X * SnakeBodySize + margin;
+                rect.Y = (int)snakePart.Position.Y * SnakeBodySize + margin;
+
+                Color snakeColor = Color.FromNonPremultiplied(255, 65, 54, 255);
+                RectangleGraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
+            }
+        }
+
+        
 
         private void HandleCollision(Vector2 newPosition)
         {
