@@ -10,16 +10,20 @@ namespace MonoGameTest_V1
         public List<Vector2> FoodList { get; private set; }
         public const int FoodSize = Snake.SnakeBodySize;
 
-        private readonly SpriteBatch spriteBatch;
         private TimeSpan lastUpdateTime;
         private readonly TimeSpan updatesPerMilliseconds;
         private readonly Random random;
 
-        public SnakeFood(SpriteBatch spriteBatch)
+        public SnakeFood()
         {
-            this.spriteBatch = spriteBatch;
             this.updatesPerMilliseconds = TimeSpan.FromMilliseconds(3000);
             this.random = new Random();
+
+            this.Init();
+        }
+
+        public void Init()
+        {
             FoodList = new List<Vector2>();
         }
 
@@ -29,11 +33,11 @@ namespace MonoGameTest_V1
             if (lastUpdateTime > updatesPerMilliseconds)
             {
                 lastUpdateTime -= updatesPerMilliseconds;
-                this.RandomFood();
+                this.SpawnRandomFood();
             }
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
             foreach (var food in FoodList)
             {
@@ -48,7 +52,7 @@ namespace MonoGameTest_V1
             }
         }
 
-        private void RandomFood()
+        private void SpawnRandomFood()
         {
             var newFood = this.GenerateUniqueLocation();
             FoodList.Add(newFood);
