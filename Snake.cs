@@ -16,9 +16,10 @@ namespace MonoGameTest_V1
         /// </summary>
         public const int SnakeBodySize = 20;
 
-        private SpriteBatch SpriteBatch { get; set; }
+        // change to cool enum state stuffz 
+        protected bool _alive;
+
         private List<SnakePart> BodyParts { get; set; }
-        private SnakeFood SnakeFood { get; set; }
 
         private SnakeDirection NextMoveDirection { get; set; }
         private SnakeDirection CurrentMoveDirection { get; set; }
@@ -28,21 +29,28 @@ namespace MonoGameTest_V1
 
         private KeyboardState oldState;
 
+        protected Color _color;
 
-        public Snake(SpriteBatch spriteBatch, SnakeFood snakeFood)
+        public Snake(Vector2 position, SnakeDirection direction, Color color)
         {
-            this.SpriteBatch = spriteBatch;
-            this.SnakeFood = snakeFood;
+            int partCount = 4;
+            this.Init(position, partCount, direction);
+
+            this._color = color;
+            updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
+        }
+
+        public void Init(Vector2 startPosition, int partCount, SnakeDirection startDirection)
+        {
+            this._alive = true;
 
             BodyParts = new List<SnakePart>();
             for (int i = 0; i < 10; i++)
             {
-                BodyParts.Add(new SnakePart(new Vector2(i, 0)));
+                BodyParts.Add(new SnakePart(startPosition - new Vector2(i, 0)));
             }
-            BodyParts.Reverse();
 
             NextMoveDirection = CurrentMoveDirection = SnakeDirection.East;
-            updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
         }
 
         
@@ -112,19 +120,19 @@ namespace MonoGameTest_V1
         }
 
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
+            int margin = 1;
+            var rect = new Rectangle();
+            rect.Width = SnakeBodySize - (margin * 2);
+            rect.Height = SnakeBodySize - (margin * 2);
+
             foreach (var snakePart in BodyParts)
             {
-                int margin = 1;
-                var rect = new Rectangle();
-                rect.Width = SnakeBodySize - (margin * 2);
-                rect.Height = SnakeBodySize -(margin * 2);
                 rect.X = (int)snakePart.Position.X * SnakeBodySize + margin;
                 rect.Y = (int)snakePart.Position.Y * SnakeBodySize + margin;
 
-                Color snakeColor = Color.FromNonPremultiplied(255, 65, 54, 255);
-                RectangleGraphicsHelper.DrawRectangle(SpriteBatch, rect, snakeColor);
+                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, _color);
             }
         }
 

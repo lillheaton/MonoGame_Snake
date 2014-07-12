@@ -18,8 +18,28 @@ namespace MonoGameTest_V1
     /// </summary>
     public class SnakeGame : Game
     {
+        /**
+         * Hehe, sneaky todo-list in SnakieSnakieGame
+         * 
+         * -    Something, something fonts...
+         * -    Centralize collision checks in manager
+         *          Makes transition to server handling easier
+         * -    Server + multiple players
+         * -    Cool particle effects ( we talkin' bad-ass cool stuffz )
+         * -    Figure out some smooth graphical style
+         * -    Other graphical effects
+         *          Post processing
+         *              Glow
+         *          Hit effects
+         *  -   Add power-ups and abilitys
+         * 
+         */
+
+
         GraphicsDeviceManager graphics;
+
         SpriteBatch spriteBatch;
+        public SpriteBatch SpriteBatch { get { return this.spriteBatch; } }
 
         private Snake snake;
         private SnakeFood snakeFood;
@@ -72,6 +92,7 @@ namespace MonoGameTest_V1
             // TODO: Unload any non ContentManager content here
         }
 
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -86,6 +107,8 @@ namespace MonoGameTest_V1
             
             base.Update(gameTime);
         }
+
+
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -102,7 +125,7 @@ namespace MonoGameTest_V1
 
             if (!GameManager.SnakeAlive)
             {
-                TextGraphicsHelper.DrawText(spriteBatch, "Game Over", "Fonts/MyFont", new Vector2(300, 200), Color.Black, 3);
+                //TextGraphicsHelper.DrawText(spriteBatch, "Game Over", "Fonts/MyFont", new Vector2(300, 200), Color.Black, 3);
             }
 
             Debugger.DrawWindowInformation(spriteBatch, graphics);
