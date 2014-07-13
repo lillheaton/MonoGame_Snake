@@ -41,8 +41,8 @@ namespace MonoGameTest_V1
         SpriteBatch spriteBatch;
         public SpriteBatch SpriteBatch { get { return this.spriteBatch; } }
 
-        private Snake snake;
-        private SnakeFood snakeFood;
+
+        private GameManager _gameManager;
 
         public SnakeGame() : base()
         {
@@ -61,6 +61,8 @@ namespace MonoGameTest_V1
             this.graphics.PreferredBackBufferWidth = ScreenManager.Width;
             this.graphics.PreferredBackBufferHeight = ScreenManager.Height;
 
+            this._gameManager = new GameManager(this);
+
             base.Initialize();
         }
 
@@ -74,9 +76,6 @@ namespace MonoGameTest_V1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             ScreenManager.Instance.LoadContentManager(Content);
-
-            snakeFood = new SnakeFood(spriteBatch);
-            snake = new Snake(spriteBatch, snakeFood);
         }
 
         /// <summary>
@@ -95,11 +94,7 @@ namespace MonoGameTest_V1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (GameManager.SnakeAlive)
-            {
-                snake.Update(gameTime);
-                snakeFood.Update(gameTime);    
-            }
+            this._gameManager.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -116,8 +111,8 @@ namespace MonoGameTest_V1
             GraphicsDevice.Clear(clearColor);
             this.spriteBatch.Begin();
 
-            snake.Draw();
-            snakeFood.Draw();
+            this._gameManager.Draw(gameTime);
+
 
             if (!GameManager.SnakeAlive)
             {

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MonoGameTest_V1
 {
@@ -33,7 +35,7 @@ namespace MonoGameTest_V1
             if (lastUpdateTime > updatesPerMilliseconds)
             {
                 lastUpdateTime -= updatesPerMilliseconds;
-                this.SpawnRandomFood();
+                //this.SpawnRandomFood();
             }
         }
 
@@ -52,24 +54,37 @@ namespace MonoGameTest_V1
             }
         }
 
-        private void SpawnRandomFood()
+
+        public void SpawnFood(List<Snake> snakes)
         {
-            var newFood = this.GenerateUniqueLocation();
+            var newFood = this.GenerateUniqueLocation(snakes);
             FoodList.Add(newFood);
             Console.WriteLine(newFood);
         }
-
-        private Vector2 GenerateUniqueLocation()
+        private Vector2 GenerateUniqueLocation(List<Snake> snakes)
         {
             const int X = ScreenManager.Width / FoodSize;
             const int Y = ScreenManager.Height / FoodSize;
             var location = new Vector2(random.Next(X), random.Next(Y));
 
-            if (FoodList.Contains(location))
+
+            if (FoodList.Contains(location) || snakes.Any(snake => snake.BodyParts.Any(part => part.Position == location)))
             {
-                return this.GenerateUniqueLocation();
+                return this.GenerateUniqueLocation(snakes);
             }
             return location;
+        }
+
+
+
+        public bool TryPickFoodAtPosition(Vector2 position)
+        {
+            if(FoodList.Contains(position))
+            {
+                FoodList.Remove(position);
+                return true;
+            }
+            return false;
         }
     }
 }

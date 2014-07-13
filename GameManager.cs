@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Microsoft.Xna.Framework;
+
+using MonoGameTest_V1.Util;
+using MonoGameTest_V1.Particles;
 
 namespace MonoGameTest_V1
 {
-    public static class GameManager
+    public class GameManager
     {
         public static bool SnakeAlive = true;
 
@@ -20,6 +24,12 @@ namespace MonoGameTest_V1
 
         // Snakes
         private List<Snake> _snakes;
+        public List<Snake> Snakes { get { return _snakes; } }
+
+
+        private TimeSpan _lastSnakeMoveTime;
+        private TimeSpan _snakeMoveDelayMS = TimeSpan.FromMilliseconds(100.0);
+
 
         // Foods
         private SnakeFood _foodManager;
@@ -28,7 +38,7 @@ namespace MonoGameTest_V1
         //private PowerUpManager _powerUpManager;
 
         // Particles
-        //private ParticleManager _particleManager;
+        private ParticleManager _particleManager;
 
 
 
@@ -43,12 +53,12 @@ namespace MonoGameTest_V1
         public void Init()
         {
             this._snakes = new List<Snake>();
-
-            this._foodManager.Init();
-
+            this._foodManager = new SnakeFood();
+            this._particleManager = new ParticleManager(this);
 
             // Spoof out a snake
             this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, ColorUtil.RandomColor());
+            this._foodManager.SpawnFood(_snakes);
         }
 
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, Color color)
@@ -68,19 +78,68 @@ namespace MonoGameTest_V1
             }
 
             // Update collisions
+            this.CheckCollisions();
 
             // Update managers
+            this._foodManager.Update(gameTime);
 
             // Update effects, particles, other states
+            this._particleManager.Update(gameTime);
         }
 
-        public void CheckCollisions()
+        protected void CheckCollisions()
         {
-            // Check snake collisions
+            // used to determine how many new fruits to add
+            int pickedFoodCount = 0;
 
-            // Check map collisions
+            foreach (Snake snake in this._snakes)
+            {
+                if (!snake.HasMoved) continue;
 
-            // Check food collisions
+                var snakePosition = snake.BodyParts[0].Position;
+
+                // Check self collision
+                if (snake.BodyParts.GetRange(1, snake.BodyParts.Count - 1).Any(part => part.Position == snakePosition))
+                {
+                    // self collision
+                    snake.SetDead();
+                }
+
+                // Check against others
+                foreach (Snake otherSnake in this._snakes)
+                {
+                    if (otherSnake == snake) continue;
+
+                    if (otherSnake.BodyParts.Any(part => part.Position == snakePosition))
+                    {
+                        // hit other snake
+                        snake.SetDead();
+                    }
+                }
+
+                // Check map bounds
+                if (snakePosition.X > (ScreenManager.Width / SnakePart.Size) || snakePosition.X < 0 ||
+                    snakePosition.Y > (ScreenManager.Height / SnakePart.Size) || snakePosition.Y < 0)
+                {
+                    // outside map
+                    snake.SetDead();
+                }
+
+
+                // Check food
+                if (this._foodManager.TryPickFoodAtPosition(snakePosition))
+                {
+                    snake.AddPart();
+                    ++pickedFoodCount;
+
+                    ParticleUtil.ParticleExplosion(this._particleManager, snakePosition * SnakePart.Size, ColorUtil.RandomColor());
+                }
+            }
+
+            while (pickedFoodCount-- > 0)
+            {
+                this._foodManager.SpawnFood(this._snakes);
+            }
         }
 
 
@@ -98,9 +157,10 @@ namespace MonoGameTest_V1
             }
 
             // Draw food
-            _foodManager.Draw(spriteBatch);
+            this._foodManager.Draw(spriteBatch);
 
             // Draw effects, particles
+            this._particleManager.Draw(spriteBatch);
         }
     }
 }
