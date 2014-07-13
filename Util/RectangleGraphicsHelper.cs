@@ -15,6 +15,7 @@ namespace MonoGameTest_V1
             spriteBatch.Draw(Texture, rectangle, color);
         }
 
+
         public static void DrawFilledRectangle(SpriteBatch spriteBatch, Rectangle rectangle, Color color, int alpha)
         {
             Texture = Texture ?? new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);

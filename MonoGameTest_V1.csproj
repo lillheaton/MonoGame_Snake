@@ -35,19 +35,23 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Particles\ParticleManager.cs" />
+    <Compile Include="Particles\BaseParticle.cs" />
+    <Compile Include="Particles\ParticleUtil.cs" />
+    <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="Direction.cs" />
-    <Compile Include="NetworkClientHelper.cs" />
+    <Compile Include="Network\NetworkClientHelper.cs" />
     <Compile Include="SnakeGame.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="RectangleGraphicsHelper.cs" />
+    <Compile Include="Util\RectangleGraphicsHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenManager.cs" />
-    <Compile Include="Snake.cs" />
+    <Compile Include="Objects\Snake.cs" />
     <Compile Include="SnakeFood.cs" />
-    <Compile Include="SnakePart.cs" />
-    <Compile Include="TextGraphicsHelper.cs" />
+    <Compile Include="Objects\SnakePart.cs" />
+    <Compile Include="Util\TextGraphicsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
