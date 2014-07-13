@@ -16,10 +16,13 @@ namespace MonoGameTest_V1
         /// </summary>
         public const int SnakeBodySize = 20;
 
+        public const float RespawnDelayMS = 1000.0f;
+
         // change to cool enum state stuffz 
         protected bool _alive;
 
-        private List<SnakePart> BodyParts { get; set; }
+        private List<SnakePart> _bodyParts;
+        public List<SnakePart> BodyParts { get { return _bodyParts; } }
 
         private SnakeDirection NextMoveDirection { get; set; }
         private SnakeDirection CurrentMoveDirection { get; set; }
@@ -30,6 +33,12 @@ namespace MonoGameTest_V1
         private KeyboardState oldState;
 
         protected Color _color;
+
+        // if greater than 0, this represents the time until the snake respawns
+        protected TimeSpan _deadCounter;
+
+        public bool HasMoved { get; private set; }
+        public bool Dead { get { return this._deadCounter.Ticks > 0; } }
 
         public Snake(Vector2 position, SnakeDirection direction, Color color)
         {
@@ -44,10 +53,10 @@ namespace MonoGameTest_V1
         {
             this._alive = true;
 
-            BodyParts = new List<SnakePart>();
-            for (int i = 0; i < 10; i++)
+            _bodyParts = new List<SnakePart>();
+            for (int i = 0; i < partCount; i++)
             {
-                BodyParts.Add(new SnakePart(startPosition - new Vector2(i, 0)));
+                _bodyParts.Add(new SnakePart(startPosition - new Vector2(i, 0)));
             }
 
             NextMoveDirection = CurrentMoveDirection = SnakeDirection.East;
@@ -57,13 +66,29 @@ namespace MonoGameTest_V1
 
         public void Update(GameTime gameTime)
         {
-            UpdateInput();
+            this.HasMoved = false;
 
-            lastUpdateTime += gameTime.ElapsedGameTime;
-            if (lastUpdateTime > updatesPerMilliseconds)
+            // check if snake is in dead state
+            if (this.Dead)
             {
-                lastUpdateTime -= updatesPerMilliseconds;
-                UpdatePosition();
+                this._deadCounter -= gameTime.ElapsedGameTime;
+
+                if (this._deadCounter.Ticks <= 0)
+                {
+                    this.Init(new Vector2(5, 0), 4, SnakeDirection.South);
+                }
+            }
+            // else update snake
+            else
+            {
+                UpdateInput();
+
+                lastUpdateTime += gameTime.ElapsedGameTime;
+                if (lastUpdateTime > updatesPerMilliseconds)
+                {
+                    lastUpdateTime -= updatesPerMilliseconds;
+                    UpdatePosition();
+                }
             }
         }
 
@@ -106,66 +131,46 @@ namespace MonoGameTest_V1
         private void UpdatePosition()
         {
             // Calculate next position
-            var newPosition = BodyParts[0].Position + NextMoveDirection.GetVector();
-
-            this.HandleCollision(newPosition);
-
-            for (int i = BodyParts.Count - 1; i > 1; i--)
+            for (int i = _bodyParts.Count - 1; i > 0; i--)
             {
-                BodyParts[i].Position = BodyParts[i - 1].Position;
+                _bodyParts[i].Position = _bodyParts[i - 1].Position;
             }
-            BodyParts.RemoveAt(BodyParts.Count - 1);
+            _bodyParts[0].Position += NextMoveDirection.GetVector();
 
             CurrentMoveDirection = NextMoveDirection;
+            this.HasMoved = true;
         }
 
 
         public void Draw(SpriteBatch spriteBatch)
         {
             int margin = 1;
+            var color = this.Dead ? Color.Lerp(_color, Color.Red, (float)Math.Cos(this._deadCounter.Ticks * 0.01)) : _color;
             var rect = new Rectangle();
             rect.Width = SnakeBodySize - (margin * 2);
             rect.Height = SnakeBodySize - (margin * 2);
 
-            foreach (var snakePart in BodyParts)
+            foreach (var snakePart in _bodyParts)
             {
                 rect.X = (int)snakePart.Position.X * SnakeBodySize + margin;
-                rect.Y = (int)snakePart.Position.Y * SnakeBodySize + margin;
+                rect.Y = (int)snakePart.Position.Y * SnakeBodySize + margin;   
 
-                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, _color);
+                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, color);
             }
         }
 
         
 
-        private void HandleCollision(Vector2 newPosition)
+
+
+        public void SetDead()
         {
-            // Snake should not colide with itself
-            if (BodyParts.Any(s => s.Position == newPosition))
-            {
-                GameManager.SnakeAlive = false;
-                return;
-            }
+            this._deadCounter = TimeSpan.FromMilliseconds(Snake.RespawnDelayMS);
+        }
 
-            // Snake should not go outside of screen
-            if (newPosition.X > (ScreenManager.Width / SnakeBodySize) || newPosition.X < 0
-                || newPosition.Y > (ScreenManager.Height / SnakeBodySize) || newPosition.Y < 0)
-            {
-                GameManager.SnakeAlive = false;
-                return;
-            }
-
-            // Check if next position contains food
-            if (SnakeFood.FoodList.Contains(newPosition))
-            {
-                SnakeFood.FoodList.Remove(newPosition);
-                BodyParts.Insert(0, new SnakePart(newPosition));
-                BodyParts.Insert(0, new SnakePart(newPosition + NextMoveDirection.GetVector()));
-            }
-            else
-            {
-                BodyParts.Insert(0, new SnakePart(newPosition));
-            }
+        public void AddPart()
+        {
+            _bodyParts.Add(new SnakePart(_bodyParts.Last<SnakePart>().Position));
         }
     }
 }
