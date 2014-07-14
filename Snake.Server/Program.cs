@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 using Lidgren.Network;
 
+using Snake.Server.Packages;
+
 namespace Snake.Server
 {
     public class Program
     {
         private static NetServer Server;
         private static NetPeerConfiguration Config;
+        private static List<NetConnection> players;
 
         static Program()
         {
@@ -21,6 +24,7 @@ namespace Snake.Server
             Config.MaximumConnections = 200;
             Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
 
+            players = new List<NetConnection>();
             Server = new NetServer(Config);
         }
 
@@ -41,11 +45,15 @@ namespace Snake.Server
                     {
                         case NetIncomingMessageType.ConnectionApproval:
                             incomingPackage.SenderConnection.Approve();
+                            Console.WriteLine("Client connected {0}...", incomingPackage.SenderEndpoint.Address);
+                            players.Add(incomingPackage.SenderConnection);
 
-                            var helloMessage = new HelloPackage();
-                            helloMessage.HelloMessage = "Tjena!";
+                            var handshake = new HandshakePackage();
+                            Server.SendMessage(handshake.Encrypt(Server), incomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                            break;
 
-                            Server.SendMessage(helloMessage.Encrypt(Server), incomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                        case NetIncomingMessageType.Data:
+
                             break;
                     }
                 }

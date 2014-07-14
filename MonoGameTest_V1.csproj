@@ -37,7 +37,8 @@
   <ItemGroup>
     <Compile Include="Debugger.cs" />
     <Compile Include="Direction.cs" />
-    <Compile Include="NetworkClientHelper.cs" />
+    <Compile Include="InputHelper.cs" />
+    <Compile Include="NetworkClientManager.cs" />
     <Compile Include="SnakeGame.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="RectangleGraphicsHelper.cs" />
@@ -72,7 +73,12 @@
     </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="Snake.Server\Snake.Server.csproj">
+      <Project>{ec61cd08-1ca4-450c-8077-2b0ac852657f}</Project>
+      <Name>Snake.Server</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="Content\Fonts\MyFont.xnb" />
   </ItemGroup>

@@ -23,11 +23,13 @@ namespace MonoGameTest_V1
 
         private Snake snake;
         private SnakeFood snakeFood;
+        private NetworkClientManager networkManager;
 
         public SnakeGame() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            this.networkManager = new NetworkClientManager();
         }
 
         /// <summary>
@@ -40,6 +42,7 @@ namespace MonoGameTest_V1
         {
             this.graphics.PreferredBackBufferWidth = ScreenManager.Width;
             this.graphics.PreferredBackBufferHeight = ScreenManager.Height;
+            this.networkManager.Connect();
 
             base.Initialize();
         }
@@ -77,7 +80,8 @@ namespace MonoGameTest_V1
             if (GameManager.SnakeAlive)
             {
                 snake.Update(gameTime);
-                snakeFood.Update(gameTime);    
+                snakeFood.Update(gameTime);
+                networkManager.Listen();
             }
             
             base.Update(gameTime);
