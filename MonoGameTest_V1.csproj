@@ -42,7 +42,7 @@
     <Compile Include="Debugger.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="InputHelper.cs" />
-    <Compile Include="NetworkClientManager.cs" />
+    <Compile Include="Network\NetworkClientManager.cs" />
     <Compile Include="SnakeGame.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Util\RectangleGraphicsHelper.cs" />
@@ -86,9 +86,7 @@
   <ItemGroup>
     <None Include="Content\Fonts\MyFont.xnb" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
