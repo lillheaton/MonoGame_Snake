@@ -37,10 +37,10 @@ namespace MonoGameTest_V1
             }
         }
 
-        public void Send(BasePackage package)
-        {
-            Client.SendMessage(package.Encrypt(Client), NetDeliveryMethod.ReliableOrdered, 0);
-        }
+        //public void Send(BasePackage package)
+        //{
+        //    Client.SendMessage(package.Encrypt(Client), NetDeliveryMethod.ReliableOrdered, 0);
+        //}
 
         public void ManageIncomingData(NetIncomingMessage dataPackage)
         {

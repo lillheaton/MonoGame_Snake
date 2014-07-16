@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 using Lidgren.Network;
 
-using Snake.Server.Packages;
 
 namespace Snake.Server
 {
@@ -48,8 +47,8 @@ namespace Snake.Server
                             Console.WriteLine("Client connected {0}...", incomingPackage.SenderEndpoint.Address);
                             players.Add(incomingPackage.SenderConnection);
 
-                            var handshake = new HandshakePackage();
-                            Server.SendMessage(handshake.Encrypt(Server), incomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
+                            //var handshake = new HandshakePackage();
+                            //Server.SendMessage(handshake.Encrypt(Server), incomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
                             break;
 
                         case NetIncomingMessageType.Data:
