@@ -99,7 +99,6 @@ namespace MonoGameTest_V1
             float epsilon = 0.1f;
             if (newState.IsKeyDown(Keys.Left) || gamePad.ThumbSticks.Left.X < -epsilon)
             {
-                Console.WriteLine("lkdsfnsd");
                 TrySetNextMove(SnakeDirection.West);
             }
 
@@ -141,28 +140,6 @@ namespace MonoGameTest_V1
             CurrentMoveDirection = NextMoveDirection;
             this.HasMoved = true;
         }
-
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            int margin = 1;
-            var color = this.Dead ? Color.Lerp(_color, Color.Red, (float)Math.Cos(this._deadCounter.Ticks * 0.01)) : _color;
-            var rect = new Rectangle();
-            rect.Width = SnakeBodySize - (margin * 2);
-            rect.Height = SnakeBodySize - (margin * 2);
-
-            foreach (var snakePart in _bodyParts)
-            {
-                rect.X = (int)snakePart.Position.X * SnakeBodySize + margin;
-                rect.Y = (int)snakePart.Position.Y * SnakeBodySize + margin;   
-
-                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, color);
-            }
-        }
-
-        
-
-
 
         public void SetDead()
         {

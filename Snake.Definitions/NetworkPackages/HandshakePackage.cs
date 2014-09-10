@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
 
-namespace Snake.Server.Packages
+namespace Snake.Definitions.NetworkPackages
 {
     public class HandshakePackage : BasePackage
     {

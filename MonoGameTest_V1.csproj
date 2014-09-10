@@ -78,15 +78,14 @@
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Snake.Server\Snake.Server.csproj">
-      <Project>{ec61cd08-1ca4-450c-8077-2b0ac852657f}</Project>
-      <Name>Snake.Server</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Content\Fonts\MyFont.xnb" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="Snake.Definitions\Snake.Definitions.csproj">
+      <Project>{25a2285e-5946-4f42-8222-8c8978d1cabc}</Project>
+      <Name>Snake.Definitions</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

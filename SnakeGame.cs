@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+
+using MonoGameTest_V1.Network;
+
 #endregion
 
 namespace MonoGameTest_V1
@@ -41,11 +44,13 @@ namespace MonoGameTest_V1
         SpriteBatch spriteBatch;
         public SpriteBatch SpriteBatch { get { return this.spriteBatch; } }
         private GameManager _gameManager;
+        private NetworkClientManager NetworkClientManager { get; set; }
 
         public SnakeGame() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            NetworkClientManager = new NetworkClientManager();
         }
 
         /// <summary>
@@ -59,6 +64,7 @@ namespace MonoGameTest_V1
             this.graphics.PreferredBackBufferWidth = ScreenManager.Width;
             this.graphics.PreferredBackBufferHeight = ScreenManager.Height;
             this._gameManager = new GameManager(this);
+            NetworkClientManager.Connect();
 
             base.Initialize();
         }
@@ -91,7 +97,9 @@ namespace MonoGameTest_V1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            this._gameManager.Update(gameTime);
+            InputHelper.SendKeyBoardInput(NetworkClientManager);
+
+            //this._gameManager.Update(gameTime);
             base.Update(gameTime);
         }
 

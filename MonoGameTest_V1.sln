@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameTest_V1", "MonoGameTest_V1.csproj", "{A8E5C832-2C11-452A-8145-FA44B05DA003}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.Server", "Snake.Server\Snake.Server.csproj", "{EC61CD08-1CA4-450C-8077-2B0AC852657F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake.Definitions", "Snake.Definitions\Snake.Definitions.csproj", "{25A2285E-5946-4F42-8222-8C8978D1CABC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,16 @@ Global
 		{EC61CD08-1CA4-450C-8077-2B0AC852657F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EC61CD08-1CA4-450C-8077-2B0AC852657F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EC61CD08-1CA4-450C-8077-2B0AC852657F}.Release|x86.ActiveCfg = Release|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{25A2285E-5946-4F42-8222-8C8978D1CABC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

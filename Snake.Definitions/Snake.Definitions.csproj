@@ -4,18 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EC61CD08-1CA4-450C-8077-2B0AC852657F}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{25A2285E-5946-4F42-8222-8C8978D1CABC}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Snake.Server</RootNamespace>
-    <AssemblyName>Snake.Server</AssemblyName>
+    <RootNamespace>Snake.Definitions</RootNamespace>
+    <AssemblyName>Snake.Definitions</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,11 +33,7 @@
   <ItemGroup>
     <Reference Include="Lidgren.Network, Version=2011.3.12.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\WindowsGL\Debug\Lidgren.Network.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\WindowsGL\Debug\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\MonoGame_Snake\bin\WindowsGL\Debug\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,21 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SnakeDirection.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="NetworkPackages\BasePackage.cs" />
+    <Compile Include="NetworkPackages\HandshakePackage.cs" />
+    <Compile Include="NetworkPackages\InputPackage.cs" />
     <Compile Include="PackageType.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Snake.cs" />
-    <Compile Include="SnakePart.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Snake.Definitions\Snake.Definitions.csproj">
-      <Project>{25a2285e-5946-4f42-8222-8c8978d1cabc}</Project>
-      <Name>Snake.Definitions</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
