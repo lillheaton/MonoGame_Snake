@@ -1,16 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Serialization;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Snake.Definitions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace MonoGameTest_V1
 {
     public class Snake
     {
+        public IPEndPoint SenderEndpoint { get; set; }
+
         /// <summary>
         /// The size of the rectangle for the graphics
         /// </summary>
@@ -32,20 +33,17 @@ namespace MonoGameTest_V1
 
         private KeyboardState oldState;
 
-        protected Color _color;
-
         // if greater than 0, this represents the time until the snake respawns
         protected TimeSpan _deadCounter;
 
         public bool HasMoved { get; private set; }
         public bool Dead { get { return this._deadCounter.Ticks > 0; } }
 
-        public Snake(Vector2 position, SnakeDirection direction, Color color)
+        public Snake(Vector2 position, SnakeDirection direction, IPEndPoint senderEndpoint)
         {
             int partCount = 4;
             this.Init(position, partCount, direction);
 
-            this._color = color;
             updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
         }
 
@@ -61,8 +59,6 @@ namespace MonoGameTest_V1
 
             NextMoveDirection = CurrentMoveDirection = SnakeDirection.East;
         }
-
-        
 
         public void Update(GameTime gameTime)
         {
@@ -81,7 +77,7 @@ namespace MonoGameTest_V1
             // else update snake
             else
             {
-                UpdateInput();
+                //UpdateInput();
 
                 lastUpdateTime += gameTime.ElapsedGameTime;
                 if (lastUpdateTime > updatesPerMilliseconds)
@@ -92,32 +88,27 @@ namespace MonoGameTest_V1
             }
         }
 
-        public void UpdateInput()
+        public void UpdateInput(Direction direction)
         {
-            KeyboardState newState = Keyboard.GetState();
-            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
-            float epsilon = 0.1f;
-            if (newState.IsKeyDown(Keys.Left) || gamePad.ThumbSticks.Left.X < -epsilon)
+            if (direction == Direction.West)
             {
                 TrySetNextMove(SnakeDirection.West);
             }
 
-            if (newState.IsKeyDown(Keys.Right) || gamePad.ThumbSticks.Left.X > epsilon)
+            if (direction == Direction.East)
             {
                 TrySetNextMove(SnakeDirection.East);
             }
 
-            if (newState.IsKeyDown(Keys.Down) || gamePad.ThumbSticks.Left.Y < -epsilon)
+            if (direction == Direction.South)
             {
                 TrySetNextMove(SnakeDirection.South);
             }
 
-            if (newState.IsKeyDown(Keys.Up) || gamePad.ThumbSticks.Left.Y > epsilon)
+            if (direction == Direction.North)
             {
                 TrySetNextMove(SnakeDirection.North);
             }
-
-            oldState = newState;
         }
         public void TrySetNextMove(SnakeDirection direction)
         {

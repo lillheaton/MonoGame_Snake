@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetworkServerManager.cs" />
     <Compile Include="SnakeDirection.cs" />
     <Compile Include="PackageType.cs" />
     <Compile Include="Program.cs" />

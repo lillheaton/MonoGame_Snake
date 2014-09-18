@@ -1,69 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Lidgren.Network;
+using System;
+using System.Threading;
 
-using Snake.Definitions.NetworkPackages;
+using Snake.Definitions;
 
 namespace Snake.Server
 {
     public class Program
     {
-        private static NetServer Server;
-        private static NetPeerConfiguration Config;
-        private static List<NetConnection> players;
+        private static NetworkServerManager Server;
+        private static List<MonoGameTest_V1.Snake> Players { get; set; }
 
         static Program()
         {
-            Config = new NetPeerConfiguration("SnakeGame");
-            Config.Port = 14242;
-            Config.MaximumConnections = 200;
-            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            Players = new List<MonoGameTest_V1.Snake>();
 
-            players = new List<NetConnection>();
-            Server = new NetServer(Config);
+            Server = new NetworkServerManager(Players);
+            Server.EventPackage += Server_EventPackage;
+            Server.Connect();
+        }
+
+        static void Server_EventPackage(object sender, EventArgs e)
+        {
+            var incomingPackage = sender as NetIncomingMessage;
+            var player = Players.FirstOrDefault(s => s.SenderEndpoint == incomingPackage.SenderEndpoint);
+            var packageType = (PackageType)incomingPackage.ReadByte();
+
+            switch (packageType)
+            {
+                case PackageType.KeyboardInput:
+                    player.UpdateInput((Direction)incomingPackage.ReadByte());
+                    break;
+            }
         }
 
         static void Main(string[] args)
         {
-            Server.Start();
-            Console.WriteLine("Server started...");
-
-            NetIncomingMessage incomingPackage;
-            
+            // Keep the program alive!
             while (true)
             {
-                incomingPackage = Server.ReadMessage();
-
-                if (incomingPackage != null)
-                {
-                    switch (incomingPackage.MessageType)
-                    {
-                        case NetIncomingMessageType.ConnectionApproval:
-                            incomingPackage.SenderConnection.Approve();
-                            Console.WriteLine("Client connected {0}...", incomingPackage.SenderEndpoint.Address);
-                            players.Add(incomingPackage.SenderConnection);
-
-                            var handshake = new HandshakePackage();
-                            Server.SendMessage(handshake.Encrypt(Server), incomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
-                            break;
-
-                        case NetIncomingMessageType.Data:
-                            var packageType = (PackageType)incomingPackage.ReadByte();
-
-                            if (packageType == PackageType.KeyboardInput)
-                            {
-                                Console.WriteLine(incomingPackage);
-                            }
-
-                            break;
-                    }
-                }
-
                 Thread.Sleep(30);
             }
         }

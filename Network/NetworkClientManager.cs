@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 using Lidgren.Network;
 
@@ -40,19 +41,21 @@ namespace MonoGameTest_V1.Network
 
         public void Listen()
         {
-            while ((this.IncomingPackage = this.Client.ReadMessage()) != null && this.ListenThread.IsAlive)
+            while (true)
             {
-                switch (this.IncomingPackage.MessageType)
+                while ((this.IncomingPackage = this.Client.ReadMessage()) != null && this.ListenThread.IsAlive)
                 {
-                    case NetIncomingMessageType.Data:
-                        this.ManageIncomingData(this.IncomingPackage);
-                        break;
-                }
+                    switch (this.IncomingPackage.MessageType)
+                    {
+                        case NetIncomingMessageType.ConnectionApproval:
+                            Console.WriteLine("skdf");
+                            break;
 
-                if (!this.IsConnected)
-                {
-                    this.Disconnect();
-                }
+                        case NetIncomingMessageType.Data:
+                            this.ManageIncomingData(this.IncomingPackage);
+                            break;
+                    }
+                }    
             }
         }
 
