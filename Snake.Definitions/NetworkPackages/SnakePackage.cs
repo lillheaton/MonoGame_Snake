@@ -1,21 +1,30 @@
-﻿namespace Definitions.NetworkPackages
+﻿using Lidgren.Network;
+using Microsoft.Xna.Framework;
+
+namespace Definitions.NetworkPackages
 {
-    //public class SnakePackage : BasePackage
-    //{
+    public class SnakePackage : BasePackage
+    {
+        private Snake Snake { get; set; }
 
+        public SnakePackage(Snake snake)
+        {
+            this.Snake = snake;
+            this.Type = PackageType.Snake;
+        }
 
-    //    public SnakePackage()
-    //    {
-    //        this.Type = PackageType.Snake;
-    //    }
+        public override NetOutgoingMessage Encrypt(NetPeer peer)
+        {
+            var package = peer.CreateMessage();
+            package.Write((byte)Type);
+            package.WriteAllProperties(Snake.BodyParts);
+            return package;
+        }
 
-    //    public override Lidgren.Network.NetOutgoingMessage Encrypt(Lidgren.Network.NetPeer peer)
-    //    {
-    //    }
-
-    //    public override void Decrypt(Lidgren.Network.NetIncomingMessage package)
-    //    {
-    //        throw new System.NotImplementedException();
-    //    }
-    //}
+        public override void Decrypt(NetIncomingMessage package)
+        {
+            this.Type = (PackageType)package.ReadByte();
+            package.ReadAllProperties(Snake.BodyParts);
+        }
+    }
 }
