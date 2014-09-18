@@ -1,5 +1,5 @@
 ﻿
-namespace Snake.Server
+namespace Server
 {
     public enum PackageType
     {

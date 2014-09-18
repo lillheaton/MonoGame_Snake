@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace MonoGameTest_V1
+namespace Client
 {
 #if WINDOWS || LINUX
     /// <summary>

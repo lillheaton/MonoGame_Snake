@@ -1,6 +1,6 @@
 ﻿using Lidgren.Network;
 
-namespace Snake.Definitions.NetworkPackages
+namespace Definitions.NetworkPackages
 {
     public class InputPackage : BasePackage
     {

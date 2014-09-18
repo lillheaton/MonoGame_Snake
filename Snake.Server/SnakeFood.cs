@@ -1,12 +1,11 @@
-﻿using Client.Objects;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Definitions;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Client
+namespace Server
 {
     public class SnakeFood
     {
@@ -40,32 +39,17 @@ namespace Client
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            foreach (var food in FoodList)
-            {
-                var rect = new Rectangle();
-                rect.Width = FoodSize;
-                rect.Height = FoodSize;
-                rect.X = (int)food.X * FoodSize;
-                rect.Y = (int)food.Y * FoodSize;
-
-                Color foodColor = Color.FromNonPremultiplied(75, 0, 130, 255);
-                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, foodColor);
-            }
-        }
-
-
-        public void SpawnFood(List<Snake> snakes)
+        public void SpawnFood(List<Definitions.Snake> snakes)
         {
             var newFood = this.GenerateUniqueLocation(snakes);
             FoodList.Add(newFood);
             Console.WriteLine(newFood);
         }
-        private Vector2 GenerateUniqueLocation(List<Snake> snakes)
+        private Vector2 GenerateUniqueLocation(List<Definitions.Snake> snakes)
         {
-            const int X = ScreenManager.Width / FoodSize;
-            const int Y = ScreenManager.Height / FoodSize;
+            // TODO: Set this in definitions project
+            const int X = 800 / FoodSize;
+            const int Y = 480 / FoodSize;
             var location = new Vector2(random.Next(X), random.Next(Y));
 
 

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Client.Particles
+namespace Definitions.Particles
 {
     public class BaseParticle
     {
@@ -52,17 +47,6 @@ namespace Client.Particles
                 _size += _sizeVelocity * elapsed;
                 _rotation += _rotationVelocity * elapsed;
             }
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            var rect = new Rectangle(
-                (int)_position.X,
-                (int)_position.Y,
-                (int)_size.X,
-                (int)_size.Y
-            );
-            RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, _color);
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoGameTest_V1
+namespace Client.Objects
 {
     public class Snake
     {

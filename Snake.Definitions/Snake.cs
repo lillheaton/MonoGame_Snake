@@ -1,16 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Snake.Definitions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using Lidgren.Network;
+using Microsoft.Xna.Framework;
 
-namespace MonoGameTest_V1
+namespace Definitions
 {
     public class Snake
     {
-        public IPEndPoint SenderEndpoint { get; set; }
+        public NetConnection Connection { get; set; }
 
         /// <summary>
         /// The size of the rectangle for the graphics
@@ -20,7 +18,7 @@ namespace MonoGameTest_V1
         public const float RespawnDelayMS = 1000.0f;
 
         // change to cool enum state stuffz 
-        protected bool _alive;
+        protected bool Alive;
 
         private List<SnakePart> _bodyParts;
         public List<SnakePart> BodyParts { get { return _bodyParts; } }
@@ -28,28 +26,27 @@ namespace MonoGameTest_V1
         private SnakeDirection NextMoveDirection { get; set; }
         private SnakeDirection CurrentMoveDirection { get; set; }
 
-        private TimeSpan lastUpdateTime;
-        private readonly TimeSpan updatesPerMilliseconds;
-
-        private KeyboardState oldState;
+        private TimeSpan _lastUpdateTime;
+        private readonly TimeSpan _updatesPerMilliseconds;
 
         // if greater than 0, this represents the time until the snake respawns
-        protected TimeSpan _deadCounter;
+        protected TimeSpan DeadCounter;
 
         public bool HasMoved { get; private set; }
-        public bool Dead { get { return this._deadCounter.Ticks > 0; } }
+        public bool Dead { get { return this.DeadCounter.Ticks > 0; } }
 
-        public Snake(Vector2 position, SnakeDirection direction, IPEndPoint senderEndpoint)
+        public Snake(Vector2 position, SnakeDirection direction, NetConnection connection)
         {
+            this.Connection = connection;
             int partCount = 4;
             this.Init(position, partCount, direction);
 
-            updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
+            _updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
         }
 
         public void Init(Vector2 startPosition, int partCount, SnakeDirection startDirection)
         {
-            this._alive = true;
+            this.Alive = true;
 
             _bodyParts = new List<SnakePart>();
             for (int i = 0; i < partCount; i++)
@@ -67,9 +64,9 @@ namespace MonoGameTest_V1
             // check if snake is in dead state
             if (this.Dead)
             {
-                this._deadCounter -= gameTime.ElapsedGameTime;
+                this.DeadCounter -= gameTime.ElapsedGameTime;
 
-                if (this._deadCounter.Ticks <= 0)
+                if (this.DeadCounter.Ticks <= 0)
                 {
                     this.Init(new Vector2(5, 0), 4, SnakeDirection.South);
                 }
@@ -77,12 +74,10 @@ namespace MonoGameTest_V1
             // else update snake
             else
             {
-                //UpdateInput();
-
-                lastUpdateTime += gameTime.ElapsedGameTime;
-                if (lastUpdateTime > updatesPerMilliseconds)
+                _lastUpdateTime += gameTime.ElapsedGameTime;
+                if (_lastUpdateTime > _updatesPerMilliseconds)
                 {
-                    lastUpdateTime -= updatesPerMilliseconds;
+                    _lastUpdateTime -= _updatesPerMilliseconds;
                     UpdatePosition();
                 }
             }
@@ -130,11 +125,13 @@ namespace MonoGameTest_V1
 
             CurrentMoveDirection = NextMoveDirection;
             this.HasMoved = true;
+
+            Console.WriteLine(BodyParts.First().Position);
         }
 
         public void SetDead()
         {
-            this._deadCounter = TimeSpan.FromMilliseconds(Snake.RespawnDelayMS);
+            this.DeadCounter = TimeSpan.FromMilliseconds(Snake.RespawnDelayMS);
         }
 
         public void AddPart()

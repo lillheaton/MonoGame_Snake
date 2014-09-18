@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading;
-
+using Definitions;
+using Definitions.NetworkPackages;
 using Lidgren.Network;
 
-using Snake.Definitions;
-using Snake.Definitions.NetworkPackages;
-
-namespace MonoGameTest_V1.Network
+namespace Client.Network
 {
     public class NetworkClientManager
     {

@@ -1,9 +1,10 @@
 ﻿
-namespace Snake.Definitions
+namespace Definitions
 {
     public enum PackageType
     {
         Handshake,
-        KeyboardInput
+        KeyboardInput,
+        Snake
     }
 }

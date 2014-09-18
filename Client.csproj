@@ -8,8 +8,8 @@
     <ProjectGuid>{A8E5C832-2C11-452A-8145-FA44B05DA003}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MonoGameTest_V1</RootNamespace>
-    <AssemblyName>MonoGameTest_V1</AssemblyName>
+    <RootNamespace>Client</RootNamespace>
+    <AssemblyName>Snake.Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -81,9 +81,9 @@
     <None Include="Content\Fonts\MyFont.xnb" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Snake.Definitions\Snake.Definitions.csproj">
+    <ProjectReference Include="Snake.Definitions\Definitions.csproj">
       <Project>{25a2285e-5946-4f42-8222-8c8978d1cabc}</Project>
-      <Name>Snake.Definitions</Name>
+      <Name>Definitions</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

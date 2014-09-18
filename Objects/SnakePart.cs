@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MonoGameTest_V1
+namespace Client.Objects
 {
     public class SnakePart
     {

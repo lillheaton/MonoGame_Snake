@@ -1,5 +1,5 @@
 ﻿
-namespace Snake.Definitions
+namespace Definitions
 {
     public enum Direction
     {

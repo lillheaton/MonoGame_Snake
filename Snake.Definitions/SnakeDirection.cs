@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 
-using Microsoft.Xna.Framework;
-
-namespace MonoGameTest_V1
+namespace Definitions
 {
     public class SnakeDirection
     {

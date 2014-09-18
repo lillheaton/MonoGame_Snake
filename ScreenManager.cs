@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace MonoGameTest_V1
+namespace Client
 {
     public class ScreenManager
     {

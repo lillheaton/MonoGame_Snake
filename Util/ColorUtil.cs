@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MonoGameTest_V1.Util
+namespace Client.Util
 {
     public static class ColorUtil
     {

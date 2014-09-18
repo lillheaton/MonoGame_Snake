@@ -1,14 +1,11 @@
 ﻿using System;
-
+using Client.Network;
+using Definitions;
+using Definitions.NetworkPackages;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-using MonoGameTest_V1.Network;
-
-using Snake.Definitions;
-using Snake.Definitions.NetworkPackages;
-
-namespace MonoGameTest_V1
+namespace Client
 {
     public class InputHelper
     {

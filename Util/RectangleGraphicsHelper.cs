@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoGameTest_V1
+namespace Client
 {
     public static class RectangleGraphicsHelper
     {

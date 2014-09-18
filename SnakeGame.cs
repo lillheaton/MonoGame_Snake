@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
+using Client.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,11 +10,9 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 
-using MonoGameTest_V1.Network;
-
 #endregion
 
-namespace MonoGameTest_V1
+namespace Client
 {
     /// <summary>
     /// This is the main type for your game

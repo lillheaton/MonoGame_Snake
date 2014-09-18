@@ -1,34 +1,30 @@
-﻿using Lidgren.Network;
-
-using Microsoft.Xna.Framework;
-
-using MonoGameTest_V1;
-
-using Snake.Definitions.NetworkPackages;
+﻿using Definitions.NetworkPackages;
+using Lidgren.Network;
 using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 
 
-namespace Snake.Server
+namespace Server
 {
     public class NetworkServerManager
     {
         private readonly NetServer Server;
         private NetPeerConfiguration Config;
-        private List<MonoGameTest_V1.Snake> players;
         private NetIncomingMessage IncomingPackage { get; set; }
         private Thread ListenThread { get; set; }
-        public event EventHandler EventPackage;
 
-        public NetworkServerManager(List<MonoGameTest_V1.Snake> players)
+        public event EventHandler NewConnection;
+        public event EventHandler IncomingDataPackage;
+        
+
+        public NetworkServerManager()
         {
             Config = new NetPeerConfiguration("SnakeGame");
             Config.Port = 14242;
             Config.MaximumConnections = 200;
             Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
 
-            this.players = players;
             Server = new NetServer(Config);
 
             ListenThread = new Thread(this.Listen);
@@ -54,28 +50,47 @@ namespace Snake.Server
                     switch (this.IncomingPackage.MessageType)
                     {
                         case NetIncomingMessageType.ConnectionApproval:
+
+                            // Accept new player
                             this.IncomingPackage.SenderConnection.Approve();
                             Console.WriteLine("Client connected {0}...", IncomingPackage.SenderEndpoint.Address);
 
-                            players.Add(new MonoGameTest_V1.Snake(new Vector2(10.0f, 0.0f), SnakeDirection.East, IncomingPackage.SenderEndpoint));
+                            // Raise event
+                            OnNewConnection(IncomingPackage.SenderConnection);
 
+                            // Send handshake
                             var handshake = new HandshakePackage();
                             Server.SendMessage(handshake.Encrypt(Server), IncomingPackage.SenderConnection, NetDeliveryMethod.ReliableOrdered, 0);
                             break;
 
                         case NetIncomingMessageType.Data:
-                            this.OnIncomingPackage(IncomingPackage);
+                            this.OnIncomingDataPackage(IncomingPackage);
                             break;
                     }
                 }
             }
         }
 
-        public void OnIncomingPackage(NetIncomingMessage incoming)
+        public void Send(Definitions.Snake snake, BasePackage package)
         {
-            if (this.IncomingPackage != null)
+            this.Server.SendMessage(package.Encrypt(this.Server), snake.Connection, NetDeliveryMethod.ReliableOrdered, 0);
+        }
+
+        protected virtual void OnNewConnection(NetConnection connection)
+        {
+            var handler = NewConnection;
+            if (handler != null)
             {
-                this.EventPackage(incoming, EventArgs.Empty);
+                handler(connection, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void OnIncomingDataPackage(NetIncomingMessage incoming)
+        {
+            var handler = NewConnection;
+            if (handler != null)
+            {
+                this.IncomingDataPackage(incoming, EventArgs.Empty);
             }
         }
     }

@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Client.Particles
+namespace Definitions.Particles
 {
     public class ParticleManager
     {
         // particles
         private List<BaseParticle> _particles;
 
-        // parent
-        private GameManager _game;
-
-        public ParticleManager(GameManager game)
+        public ParticleManager()
         {
-            this._game = game;
-
             this.Init();
         }
 
@@ -41,17 +32,6 @@ namespace Client.Particles
                 }
             }
         }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            foreach (BaseParticle particle in this._particles)
-            {
-                particle.Draw(spriteBatch);
-            }
-        }
-
-
-
 
         public void AddParticle(BaseParticle particle)
         {
