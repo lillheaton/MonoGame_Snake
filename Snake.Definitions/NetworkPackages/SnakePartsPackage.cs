@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
@@ -22,6 +23,8 @@ namespace Definitions.NetworkPackages
             var package = peer.CreateMessage();
             package.Write((byte)Type);
             package.Write(Snake.BodyParts.Count);
+
+            Console.WriteLine(Snake.BodyParts.First().Position);
 
             foreach (var bodypart in Snake.BodyParts)
             {
@@ -50,6 +53,8 @@ namespace Definitions.NetworkPackages
                 float y = package.ReadFloat();
                 snakeParts.Add(new SnakePart(new Vector2(x, y)));
             }
+
+            Console.WriteLine(snakeParts.First().Position);
 
             return snakeParts;
         }

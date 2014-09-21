@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Definitions;
+using Definitions.EventArguments;
 using Definitions.NetworkPackages;
 using Lidgren.Network;
 
@@ -14,7 +15,7 @@ namespace Client.Network
         private Thread ListenThread { get; set; }
 
         public bool IsConnected { get; private set; }
-        public event EventHandler IncomingDataPackage;
+        public event EventHandler<PackageEventArgs> IncomingDataPackage;
 
 
         public NetworkClientManager()
@@ -84,7 +85,7 @@ namespace Client.Network
             var handler = IncomingDataPackage;
             if (handler != null)
             {
-                handler(dataPackage, EventArgs.Empty);
+                handler(this, new PackageEventArgs(dataPackage));
             }
         }
     }

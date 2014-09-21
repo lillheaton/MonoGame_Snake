@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 
 using Definitions;
+using Definitions.EventArguments;
 using Definitions.NetworkPackages;
 using Definitions.Particles;
 using Lidgren.Network;
@@ -63,16 +64,16 @@ namespace Server
             SendPackageThread.Start();
         }
 
-        private void _server_NewConnection(object sender, EventArgs e)
+        private void _server_NewConnection(object sender, ConnectionEventArgs e)
         {
             // New player wants to join the game
-            var connection = sender as NetConnection;
+            var connection = e.NetConnection;
             this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, connection);
         }
 
-        private void _server_IncomingDataPackage(object sender, EventArgs e)
+        private void _server_IncomingDataPackage(object sender, PackageEventArgs e)
         {
-            var incomingPackage = sender as NetIncomingMessage;
+            var incomingPackage = e.IncomingPackage;
             if (incomingPackage != null)
             {
                 var snake = Snakes.FirstOrDefault(s => s.Connection == incomingPackage.SenderConnection);
@@ -89,12 +90,17 @@ namespace Server
 
         private void SendPackages()
         {
-            while (Snakes.Count > 0)
+            while (true)
             {
-                foreach (var snake in Snakes)
+                while (Snakes.Count > 0)
                 {
-                    var snakePackage = new SnakePartsPackage(snake);
-                    _server.Send(snake, snakePackage);
+                    foreach (var snake in Snakes)
+                    {
+                        var snakePackage = new SnakePartsPackage(snake);
+                        _server.Send(snake, snakePackage);
+                    }
+
+                    Thread.Sleep(30);
                 }
             }
         }

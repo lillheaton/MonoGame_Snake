@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
+    <Compile Include="EventArguments\ConnectionEventArgs.cs" />
+    <Compile Include="EventArguments\PackageEventArgs.cs" />
     <Compile Include="NetworkPackages\HandshakePackage.cs" />
     <Compile Include="NetworkPackages\IBasePackage.cs" />
     <Compile Include="NetworkPackages\InputPackage.cs" />

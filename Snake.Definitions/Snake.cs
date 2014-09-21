@@ -125,8 +125,6 @@ namespace Definitions
 
             CurrentMoveDirection = NextMoveDirection;
             this.HasMoved = true;
-
-            Console.WriteLine(BodyParts.First().Position);
         }
 
         public void SetDead()

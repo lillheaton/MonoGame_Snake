@@ -1,9 +1,9 @@
-﻿using Definitions.NetworkPackages;
+﻿using Definitions.EventArguments;
+using Definitions.NetworkPackages;
 using Lidgren.Network;
 using System;
 using System.Net;
 using System.Threading;
-
 
 namespace Server
 {
@@ -14,8 +14,8 @@ namespace Server
         private NetIncomingMessage IncomingPackage { get; set; }
         private Thread ListenThread { get; set; }
 
-        public event EventHandler NewConnection;
-        public event EventHandler IncomingDataPackage;
+        public event EventHandler<ConnectionEventArgs> NewConnection;
+        public event EventHandler<PackageEventArgs> IncomingDataPackage;
         
 
         public NetworkServerManager()
@@ -81,7 +81,7 @@ namespace Server
             var handler = NewConnection;
             if (handler != null)
             {
-                handler(connection, EventArgs.Empty);
+                handler(this, new ConnectionEventArgs(connection));
             }
         }
 
@@ -90,7 +90,7 @@ namespace Server
             var handler = NewConnection;
             if (handler != null)
             {
-                this.IncomingDataPackage(incoming, EventArgs.Empty);
+                this.IncomingDataPackage(this, new PackageEventArgs(incoming));
             }
         }
     }

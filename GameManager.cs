@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Client.Network;
 using Client.Objects;
 using Client.Particles;
 using Client.Util;
 using Definitions;
+using Definitions.EventArguments;
 using Definitions.NetworkPackages;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
@@ -63,104 +65,38 @@ namespace Client
             this.Snakes = new List<ClientSnake>();
             this._foodManager = new SnakeFood();
             this._particleManager = new ParticleManager(this);
+            this._foodManager.SpawnFood(Snakes);
+
             _networkClientManager = new NetworkClientManager();
             _networkClientManager.Connect();
             _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
-            // Spoof out a snake
-            //this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, ColorUtil.RandomColor());
-            this._foodManager.SpawnFood(Snakes);
         }
 
-        void _networkClientManager_IncomingDataPackage(object sender, EventArgs e)
+        private void _networkClientManager_IncomingDataPackage(object sender, PackageEventArgs e)
         {
-            var incomingData = sender as NetIncomingMessage;
+            var incomingData = e.IncomingPackage;
             switch (incomingData.PeekByte())
             {
                 case (byte)PackageType.Snake:
-                    var snakeParts = SnakePartsPackage.Decrypt(incomingData);
+                    var ipAddress = incomingData.SenderEndpoint.Address;
+                    var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
+                    if (snake != null)
+                    {
+                        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);    
+                    }
+                    else
+                    {
+                        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
+                    }
+                    
                     break;
             }
         }
 
-        public void AddSnake(Vector2 startPosition, SnakeDirection direction, Color color)
+        public void AddSnake(List<SnakePart> bodyPart, Color color, IPAddress ipAddress)
         {
-            var snake = new ClientSnake(startPosition, direction, color);
+            var snake = new ClientSnake(bodyPart, color, ipAddress);
             this.Snakes.Add(snake);
-        }
-
-
-
-        public void Update(GameTime gameTime)
-        {
-            // Update snakes
-            foreach (ClientSnake snake in Snakes)
-            {
-                snake.Update(gameTime);
-            }
-
-            // Update collisions
-            this.CheckCollisions();
-
-            // Update managers
-            this._foodManager.Update(gameTime);
-
-            // Update effects, particles, other states
-            this._particleManager.Update(gameTime);
-        }
-
-        protected void CheckCollisions()
-        {
-            // used to determine how many new fruits to add
-            int pickedFoodCount = 0;
-
-            foreach (ClientSnake snake in this.Snakes)
-            {
-                if (!snake.HasMoved) continue;
-
-                var snakePosition = snake.BodyParts[0].Position;
-
-                // Check self collision
-                if (snake.BodyParts.GetRange(1, snake.BodyParts.Count - 1).Any(part => part.Position == snakePosition))
-                {
-                    // self collision
-                    snake.SetDead();
-                }
-
-                // Check against others
-                foreach (ClientSnake otherSnake in this.Snakes)
-                {
-                    if (otherSnake == snake) continue;
-
-                    if (otherSnake.BodyParts.Any(part => part.Position == snakePosition))
-                    {
-                        // hit other snake
-                        snake.SetDead();
-                    }
-                }
-
-                // Check map bounds
-                if (snakePosition.X > (ScreenManager.Width / SnakePart.Size) || snakePosition.X < 0 ||
-                    snakePosition.Y > (ScreenManager.Height / SnakePart.Size) || snakePosition.Y < 0)
-                {
-                    // outside map
-                    snake.SetDead();
-                }
-
-
-                // Check food
-                if (this._foodManager.TryPickFoodAtPosition(snakePosition))
-                {
-                    snake.AddPart();
-                    ++pickedFoodCount;
-
-                    ParticleUtil.ParticleExplosion(this._particleManager, snakePosition * SnakePart.Size, ColorUtil.RandomColor());
-                }
-            }
-
-            while (pickedFoodCount-- > 0)
-            {
-                this._foodManager.SpawnFood(this.Snakes);
-            }
         }
 
         public void SendKeyBoardInput()
@@ -191,8 +127,6 @@ namespace Client
             oldState = newState;
         }
 
-
-
         public void Draw(GameTime gameTime)
         {
             var spriteBatch = this._game.SpriteBatch;
@@ -203,6 +137,7 @@ namespace Client
             foreach (ClientSnake snake in Snakes)
             {
                 snake.Draw(spriteBatch);
+                Console.WriteLine(snake.BodyParts.First().Position);
             }
 
             // Draw food
