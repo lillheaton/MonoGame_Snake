@@ -20,8 +20,7 @@ namespace Definitions
         // change to cool enum state stuffz 
         protected bool Alive;
 
-        private List<SnakePart> _bodyParts;
-        public List<SnakePart> BodyParts { get { return _bodyParts; } }
+        public List<SnakePart> BodyParts { get; set; }
 
         private SnakeDirection NextMoveDirection { get; set; }
         private SnakeDirection CurrentMoveDirection { get; set; }
@@ -48,10 +47,10 @@ namespace Definitions
         {
             this.Alive = true;
 
-            _bodyParts = new List<SnakePart>();
+            BodyParts = new List<SnakePart>();
             for (int i = 0; i < partCount; i++)
             {
-                _bodyParts.Add(new SnakePart(startPosition - new Vector2(i, 0)));
+                BodyParts.Add(new SnakePart(startPosition - new Vector2(i, 0)));
             }
 
             NextMoveDirection = CurrentMoveDirection = SnakeDirection.East;
@@ -117,11 +116,11 @@ namespace Definitions
         private void UpdatePosition()
         {
             // Calculate next position
-            for (int i = _bodyParts.Count - 1; i > 0; i--)
+            for (int i = BodyParts.Count - 1; i > 0; i--)
             {
-                _bodyParts[i].Position = _bodyParts[i - 1].Position;
+                BodyParts[i].Position = BodyParts[i - 1].Position;
             }
-            _bodyParts[0].Position += NextMoveDirection.GetVector();
+            BodyParts[0].Position += NextMoveDirection.GetVector();
 
             CurrentMoveDirection = NextMoveDirection;
             this.HasMoved = true;
@@ -136,7 +135,7 @@ namespace Definitions
 
         public void AddPart()
         {
-            _bodyParts.Add(new SnakePart(_bodyParts.Last<SnakePart>().Position));
+            BodyParts.Add(new SnakePart(BodyParts.Last<SnakePart>().Position));
         }
     }
 }

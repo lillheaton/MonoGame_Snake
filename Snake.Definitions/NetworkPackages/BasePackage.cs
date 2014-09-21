@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using System.Runtime.CompilerServices;
+using Lidgren.Network;
 
 namespace Definitions.NetworkPackages
 {
@@ -8,6 +9,6 @@ namespace Definitions.NetworkPackages
 
         public abstract NetOutgoingMessage Encrypt(NetPeer peer);
 
-        public abstract void Decrypt(NetIncomingMessage package);
+        public abstract T Decrypt<T>(NetIncomingMessage package);
     }
 }

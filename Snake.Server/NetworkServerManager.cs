@@ -73,7 +73,7 @@ namespace Server
 
         public void Send(Definitions.Snake snake, BasePackage package)
         {
-            this.Server.SendMessage(package.Encrypt(this.Server), snake.Connection, NetDeliveryMethod.ReliableOrdered, 0);
+            this.Server.SendMessage(package.Encrypt(this.Server), snake.Connection, NetDeliveryMethod.ReliableOrdered);
         }
 
         protected virtual void OnNewConnection(NetConnection connection)

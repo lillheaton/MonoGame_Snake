@@ -8,11 +8,14 @@ namespace Client.Network
 {
     public class NetworkClientManager
     {
-        public bool IsConnected { get; private set; }
         private NetClient Client { get; set; }
         private NetPeerConfiguration Config { get; set; }
         private NetIncomingMessage IncomingPackage { get; set; }
         private Thread ListenThread { get; set; }
+
+        public bool IsConnected { get; private set; }
+        public event EventHandler IncomingDataPackage;
+
 
         public NetworkClientManager()
         {
@@ -53,13 +56,13 @@ namespace Client.Network
                             this.ManageIncomingData(this.IncomingPackage);
                             break;
                     }
-                }    
+                }
             }
         }
 
         public void Send(BasePackage package)
         {
-            this.Client.SendMessage(package.Encrypt(this.Client), NetDeliveryMethod.ReliableOrdered, 0);
+            this.Client.SendMessage(package.Encrypt(this.Client), NetDeliveryMethod.ReliableOrdered);
         }
 
         public void ManageIncomingData(NetIncomingMessage dataPackage)
@@ -69,6 +72,19 @@ namespace Client.Network
                 case (byte)PackageType.Handshake:
                     this.IsConnected = true;
                     break;
+
+                default:
+                    OnIncomingDataPackage(dataPackage);
+                    break;
+            }
+        }
+
+        protected virtual void OnIncomingDataPackage(NetIncomingMessage dataPackage)
+        {
+            var handler = IncomingDataPackage;
+            if (handler != null)
+            {
+                handler(dataPackage, EventArgs.Empty);
             }
         }
     }

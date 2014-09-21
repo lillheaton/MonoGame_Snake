@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Net;
 using Definitions;
+using Definitions.NetworkPackages;
 using Definitions.Particles;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
@@ -42,7 +43,7 @@ namespace Server
         public void Init()
         {
             this._server = new NetworkServerManager();
-            this._snakes = new List<Definitions.Snake>();
+            this._snakes = new List<Snake>();
             this._foodManager = new SnakeFood();
             this._particleManager = new ParticleManager();
 
@@ -81,7 +82,7 @@ namespace Server
 
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, NetConnection connection)
         {
-            var snake = new Definitions.Snake(startPosition, direction, connection);
+            var snake = new Snake(startPosition, direction, connection);
             this._snakes.Add(snake);
         }
 
@@ -93,6 +94,8 @@ namespace Server
             foreach (var snake in _snakes)
             {
                 snake.Update(gameTime);
+                var snakePackage = new SnakePackage(snake);                
+                _server.Send(snake, snakePackage);
             }
 
             // Update collisions

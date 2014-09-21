@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Client.Objects;
+using Client.Network;
 using Client.Particles;
 using Client.Util;
+using Definitions;
+using Definitions.NetworkPackages;
+using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using Snake = Client.Objects.Snake;
+using SnakePart = Client.Objects.SnakePart;
 
 namespace Client
 {
@@ -22,8 +27,7 @@ namespace Client
 
 
         // Snakes
-        private List<Snake> _snakes;
-        public List<Snake> Snakes { get { return _snakes; } }
+        public List<Snake> Snakes { get; private set; }
 
 
         private TimeSpan _lastSnakeMoveTime;
@@ -39,6 +43,9 @@ namespace Client
         // Particles
         private ParticleManager _particleManager;
 
+        // Network
+        private NetworkClientManager _networkClientManager;
+
 
 
         public GameManager(SnakeGame game)
@@ -51,19 +58,31 @@ namespace Client
 
         public void Init()
         {
-            this._snakes = new List<Snake>();
+            this.Snakes = new List<Snake>();
             this._foodManager = new SnakeFood();
             this._particleManager = new ParticleManager(this);
+            _networkClientManager = new NetworkClientManager();
 
+            _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
             // Spoof out a snake
-            this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, ColorUtil.RandomColor());
-            this._foodManager.SpawnFood(_snakes);
+            //this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, ColorUtil.RandomColor());
+            this._foodManager.SpawnFood(Snakes);
+        }
+
+        void _networkClientManager_IncomingDataPackage(object sender, EventArgs e)
+        {
+            var incomingData = sender as NetIncomingMessage;
+            switch (incomingData.PeekByte())
+            {
+                case (byte)PackageType.Snake:
+                    var snakePackage = new SnakePackage(incomingData);
+            }
         }
 
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, Color color)
         {
             var snake = new Snake(startPosition, direction, color);
-            this._snakes.Add(snake);
+            this.Snakes.Add(snake);
         }
 
 
@@ -71,7 +90,7 @@ namespace Client
         public void Update(GameTime gameTime)
         {
             // Update snakes
-            foreach (Snake snake in _snakes)
+            foreach (Snake snake in Snakes)
             {
                 snake.Update(gameTime);
             }
@@ -91,7 +110,7 @@ namespace Client
             // used to determine how many new fruits to add
             int pickedFoodCount = 0;
 
-            foreach (Snake snake in this._snakes)
+            foreach (Snake snake in this.Snakes)
             {
                 if (!snake.HasMoved) continue;
 
@@ -105,7 +124,7 @@ namespace Client
                 }
 
                 // Check against others
-                foreach (Snake otherSnake in this._snakes)
+                foreach (Snake otherSnake in this.Snakes)
                 {
                     if (otherSnake == snake) continue;
 
@@ -137,7 +156,7 @@ namespace Client
 
             while (pickedFoodCount-- > 0)
             {
-                this._foodManager.SpawnFood(this._snakes);
+                this._foodManager.SpawnFood(this.Snakes);
             }
         }
 
@@ -150,7 +169,7 @@ namespace Client
             // Draw backgroud, environment
 
             // Draw snakes
-            foreach (Snake snake in _snakes)
+            foreach (Snake snake in Snakes)
             {
                 snake.Draw(spriteBatch);
             }
