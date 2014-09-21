@@ -42,13 +42,11 @@ namespace Client
         SpriteBatch spriteBatch;
         public SpriteBatch SpriteBatch { get { return this.spriteBatch; } }
         private GameManager _gameManager;
-        private NetworkClientManager NetworkClientManager { get; set; }
 
         public SnakeGame() : base()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            NetworkClientManager = new NetworkClientManager();
         }
 
         /// <summary>
@@ -62,7 +60,6 @@ namespace Client
             this.graphics.PreferredBackBufferWidth = ScreenManager.Width;
             this.graphics.PreferredBackBufferHeight = ScreenManager.Height;
             this._gameManager = new GameManager(this);
-            NetworkClientManager.Connect();
 
             base.Initialize();
         }
@@ -94,8 +91,8 @@ namespace Client
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            InputHelper.SendKeyBoardInput(NetworkClientManager);
+            
+            this._gameManager.SendKeyBoardInput();
 
             //this._gameManager.Update(gameTime);
             base.Update(gameTime);

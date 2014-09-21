@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Definitions;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Client.Objects
 {
-    public class Snake
+    public class ClientSnake
     {
         /// <summary>
         /// The size of the rectangle for the graphics
@@ -38,7 +41,7 @@ namespace Client.Objects
         public bool HasMoved { get; private set; }
         public bool Dead { get { return this._deadCounter.Ticks > 0; } }
 
-        public Snake(Vector2 position, SnakeDirection direction, Color color)
+        public ClientSnake(Vector2 position, SnakeDirection direction, Color color)
         {
             int partCount = 4;
             this.Init(position, partCount, direction);
@@ -79,51 +82,12 @@ namespace Client.Objects
             // else update snake
             else
             {
-                UpdateInput();
-
                 lastUpdateTime += gameTime.ElapsedGameTime;
                 if (lastUpdateTime > updatesPerMilliseconds)
                 {
                     lastUpdateTime -= updatesPerMilliseconds;
                     UpdatePosition();
                 }
-            }
-        }
-
-        public void UpdateInput()
-        {
-            KeyboardState newState = Keyboard.GetState();
-            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
-            float epsilon = 0.1f;
-            if (newState.IsKeyDown(Keys.Left) || gamePad.ThumbSticks.Left.X < -epsilon)
-            {
-                Console.WriteLine("lkdsfnsd");
-                TrySetNextMove(SnakeDirection.West);
-            }
-
-            if (newState.IsKeyDown(Keys.Right) || gamePad.ThumbSticks.Left.X > epsilon)
-            {
-                TrySetNextMove(SnakeDirection.East);
-            }
-
-            if (newState.IsKeyDown(Keys.Down) || gamePad.ThumbSticks.Left.Y < -epsilon)
-            {
-                TrySetNextMove(SnakeDirection.South);
-            }
-
-            if (newState.IsKeyDown(Keys.Up) || gamePad.ThumbSticks.Left.Y > epsilon)
-            {
-                TrySetNextMove(SnakeDirection.North);
-            }
-
-            oldState = newState;
-        }
-        public void TrySetNextMove(SnakeDirection direction)
-        {
-            bool isOpposite = direction.isOppositeOf(CurrentMoveDirection);
-            if (!isOpposite)
-            {
-                NextMoveDirection = direction;
             }
         }
 
@@ -158,13 +122,9 @@ namespace Client.Objects
             }
         }
 
-        
-
-
-
         public void SetDead()
         {
-            this._deadCounter = TimeSpan.FromMilliseconds(Snake.RespawnDelayMS);
+            this._deadCounter = TimeSpan.FromMilliseconds(ClientSnake.RespawnDelayMS);
         }
 
         public void AddPart()

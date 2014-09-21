@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Instrumentation;
 using System.Net;
+using System.Threading;
+
 using Definitions;
 using Definitions.NetworkPackages;
 using Definitions.Particles;
@@ -34,6 +36,8 @@ namespace Server
 
         private NetworkServerManager _server;
 
+        private Thread SendPackageThread;
+
         public GameManager()
         {
             // init stuff
@@ -54,6 +58,9 @@ namespace Server
             _server.Connect();
             _server.NewConnection += _server_NewConnection;
             _server.IncomingDataPackage += _server_IncomingDataPackage;
+
+            SendPackageThread = new Thread(SendPackages);
+            SendPackageThread.Start();
         }
 
         private void _server_NewConnection(object sender, EventArgs e)
@@ -80,6 +87,18 @@ namespace Server
             }
         }
 
+        private void SendPackages()
+        {
+            while (Snakes.Count > 0)
+            {
+                foreach (var snake in Snakes)
+                {
+                    var snakePackage = new SnakePartsPackage(snake);
+                    _server.Send(snake, snakePackage);
+                }
+            }
+        }
+
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, NetConnection connection)
         {
             var snake = new Snake(startPosition, direction, connection);
@@ -94,8 +113,6 @@ namespace Server
             foreach (var snake in _snakes)
             {
                 snake.Update(gameTime);
-                var snakePackage = new SnakePackage(snake);                
-                _server.Send(snake, snakePackage);
             }
 
             // Update collisions

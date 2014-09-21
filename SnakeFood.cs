@@ -1,4 +1,6 @@
 ﻿using Client.Objects;
+
+using Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -56,13 +58,13 @@ namespace Client
         }
 
 
-        public void SpawnFood(List<Snake> snakes)
+        public void SpawnFood(List<ClientSnake> snakes)
         {
             var newFood = this.GenerateUniqueLocation(snakes);
             FoodList.Add(newFood);
             Console.WriteLine(newFood);
         }
-        private Vector2 GenerateUniqueLocation(List<Snake> snakes)
+        private Vector2 GenerateUniqueLocation(List<ClientSnake> snakes)
         {
             const int X = ScreenManager.Width / FoodSize;
             const int Y = ScreenManager.Height / FoodSize;

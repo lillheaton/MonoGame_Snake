@@ -2,8 +2,9 @@
 
 namespace Definitions.NetworkPackages
 {
-    public class InputPackage : BasePackage
+    public class InputPackage : IPackage<Direction>
     {
+        public PackageType Type;
         public Direction Direction { get; set; }
 
         public InputPackage(Direction direction)
@@ -12,7 +13,7 @@ namespace Definitions.NetworkPackages
             this.Type = PackageType.KeyboardInput;
         }
 
-        public override NetOutgoingMessage Encrypt(NetPeer peer)
+        public NetOutgoingMessage Encrypt(NetPeer peer)
         {
             var package = peer.CreateMessage();
             package.Write((byte)Type);
@@ -20,10 +21,15 @@ namespace Definitions.NetworkPackages
             return package;
         }
 
-        public override void Decrypt(NetIncomingMessage package)
+        Direction IPackage<Direction>.Decrypt(NetIncomingMessage package)
         {
-            this.Type = (PackageType)package.ReadByte();
-            this.Direction = (Direction)package.ReadByte();
+            return Decrypt(package);
+        }
+
+        public static Direction Decrypt(NetIncomingMessage package)
+        {
+            var type = (PackageType)package.ReadByte();
+            return (Direction)package.ReadByte();            
         }
     }
 }

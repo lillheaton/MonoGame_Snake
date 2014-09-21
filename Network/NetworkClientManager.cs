@@ -60,7 +60,7 @@ namespace Client.Network
             }
         }
 
-        public void Send(BasePackage package)
+        public void Send(IBasePackage package)
         {
             this.Client.SendMessage(package.Encrypt(this.Client), NetDeliveryMethod.ReliableOrdered);
         }

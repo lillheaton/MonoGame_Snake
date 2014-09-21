@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Client.Network;
+using Client.Objects;
 using Client.Particles;
 using Client.Util;
 using Definitions;
 using Definitions.NetworkPackages;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using Snake = Client.Objects.Snake;
-using SnakePart = Client.Objects.SnakePart;
+using Microsoft.Xna.Framework.Input;
 
 namespace Client
 {
     public class GameManager
     {
         public static bool SnakeAlive = true;
+
+        private KeyboardState oldState;
 
         // Game state, could be some enum for actual state
         private bool _running = false;
@@ -27,7 +29,7 @@ namespace Client
 
 
         // Snakes
-        public List<Snake> Snakes { get; private set; }
+        public List<ClientSnake> Snakes { get; private set; }
 
 
         private TimeSpan _lastSnakeMoveTime;
@@ -58,11 +60,11 @@ namespace Client
 
         public void Init()
         {
-            this.Snakes = new List<Snake>();
+            this.Snakes = new List<ClientSnake>();
             this._foodManager = new SnakeFood();
             this._particleManager = new ParticleManager(this);
             _networkClientManager = new NetworkClientManager();
-
+            _networkClientManager.Connect();
             _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
             // Spoof out a snake
             //this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, ColorUtil.RandomColor());
@@ -75,13 +77,14 @@ namespace Client
             switch (incomingData.PeekByte())
             {
                 case (byte)PackageType.Snake:
-                    var snakePackage = new SnakePackage(incomingData);
+                    var snakeParts = SnakePartsPackage.Decrypt(incomingData);
+                    break;
             }
         }
 
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, Color color)
         {
-            var snake = new Snake(startPosition, direction, color);
+            var snake = new ClientSnake(startPosition, direction, color);
             this.Snakes.Add(snake);
         }
 
@@ -90,7 +93,7 @@ namespace Client
         public void Update(GameTime gameTime)
         {
             // Update snakes
-            foreach (Snake snake in Snakes)
+            foreach (ClientSnake snake in Snakes)
             {
                 snake.Update(gameTime);
             }
@@ -110,7 +113,7 @@ namespace Client
             // used to determine how many new fruits to add
             int pickedFoodCount = 0;
 
-            foreach (Snake snake in this.Snakes)
+            foreach (ClientSnake snake in this.Snakes)
             {
                 if (!snake.HasMoved) continue;
 
@@ -124,7 +127,7 @@ namespace Client
                 }
 
                 // Check against others
-                foreach (Snake otherSnake in this.Snakes)
+                foreach (ClientSnake otherSnake in this.Snakes)
                 {
                     if (otherSnake == snake) continue;
 
@@ -160,6 +163,34 @@ namespace Client
             }
         }
 
+        public void SendKeyBoardInput()
+        {
+            KeyboardState newState = Keyboard.GetState();
+            GamePadState gamePad = GamePad.GetState(PlayerIndex.One);
+            float epsilon = 0.1f;
+            if ((oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left)) || gamePad.ThumbSticks.Left.X < -epsilon)
+            {
+                _networkClientManager.Send(new InputPackage(Direction.West));
+            }
+
+            if ((oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right)) || gamePad.ThumbSticks.Left.X > epsilon)
+            {
+                _networkClientManager.Send(new InputPackage(Direction.East));
+            }
+
+            if ((oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down)) || gamePad.ThumbSticks.Left.Y < -epsilon)
+            {
+                _networkClientManager.Send(new InputPackage(Direction.South));
+            }
+
+            if ((oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up)) || gamePad.ThumbSticks.Left.Y > epsilon)
+            {
+                _networkClientManager.Send(new InputPackage(Direction.North));
+            }
+
+            oldState = newState;
+        }
+
 
 
         public void Draw(GameTime gameTime)
@@ -169,7 +200,7 @@ namespace Client
             // Draw backgroud, environment
 
             // Draw snakes
-            foreach (Snake snake in Snakes)
+            foreach (ClientSnake snake in Snakes)
             {
                 snake.Draw(spriteBatch);
             }

@@ -6,21 +6,22 @@ using Microsoft.Xna.Framework;
 
 namespace Definitions.NetworkPackages
 {
-    public class SnakePackage : BasePackage
+    public class SnakePartsPackage : IPackage<List<SnakePart>>
     {
-        public Snake Snake { get; set; }
+        public PackageType Type;
+        private Snake Snake { get; set; }
 
-        public SnakePackage(Snake snake)
+        public SnakePartsPackage(Snake snake)
         {
+            Type = PackageType.Snake;
             this.Snake = snake;
-            this.Type = PackageType.Snake;
         }
 
-        public override NetOutgoingMessage Encrypt(NetPeer peer)
+        public NetOutgoingMessage Encrypt(NetPeer peer)
         {
             var package = peer.CreateMessage();
             package.Write((byte)Type);
-            package.WriteVariableInt32(Snake.BodyParts.Count);
+            package.Write(Snake.BodyParts.Count);
 
             foreach (var bodypart in Snake.BodyParts)
             {
@@ -31,23 +32,26 @@ namespace Definitions.NetworkPackages
             return package;
         }
 
-        public override Snake Decrypt<T>(NetIncomingMessage package)
+        List<SnakePart> IPackage<List<SnakePart>>.Decrypt(NetIncomingMessage package)
         {
-            throw new NotImplementedException();
+            return Decrypt(package);
         }
 
-        public Snake Decrypt(NetIncomingMessage package)
+        public static List<SnakePart> Decrypt(NetIncomingMessage package)
         {
-            this.Type = (PackageType)package.ReadByte();
+            // Need to read the first byte
+            var type = (PackageType)package.ReadByte();
             int numberOfBodyParts = package.ReadInt32();
-            
-            Snake.BodyParts = new List<SnakePart>(numberOfBodyParts);
+            var snakeParts = new List<SnakePart>();
+
             for (int i = 0; i < numberOfBodyParts; i++)
             {
                 float x = package.ReadFloat();
                 float y = package.ReadFloat();
-                Snake.BodyParts[i] = new SnakePart(new Vector2(x, y));
-            }           
+                snakeParts.Add(new SnakePart(new Vector2(x, y)));
+            }
+
+            return snakeParts;
         }
     }
 }
