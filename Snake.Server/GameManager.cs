@@ -16,6 +16,7 @@ namespace Server
 {
     public class GameManager
     {
+        private static object LockObject = new object();
         public static bool SnakeAlive = true;
 
         // Game state, could be some enum for actual state
@@ -24,7 +25,7 @@ namespace Server
 
         // Snakes
         private List<Snake> _snakes;
-        public List<Definitions.Snake> Snakes { get { return _snakes; } }
+        public List<Snake> Snakes { get { return _snakes; } }
 
         // Foods
         private SnakeFood _foodManager;
@@ -96,8 +97,11 @@ namespace Server
                 {
                     foreach (var snake in Snakes)
                     {
-                        var snakePackage = new SnakePartsPackage(snake);
-                        _server.Send(snake, snakePackage);
+                        foreach (var otherSnakes in Snakes)
+                        {
+                            var snakePackage = new SnakePartsPackage(snake);
+                            _server.Send(otherSnakes, snakePackage);
+                        }
                     }
 
                     Thread.Sleep(30);
@@ -115,20 +119,23 @@ namespace Server
 
         public void Update(GameTime gameTime)
         {
-            // Update snakes
-            foreach (var snake in _snakes)
+            lock (LockObject)
             {
-                snake.Update(gameTime);
+                // Update snakes
+                foreach (var snake in _snakes)
+                {
+                    snake.Update(gameTime);
+                }
+
+                // Update collisions
+                this.CheckCollisions();
+
+                // Update managers
+                this._foodManager.Update(gameTime);
+
+                // Update effects, particles, other states
+                this._particleManager.Update(gameTime);    
             }
-
-            // Update collisions
-            this.CheckCollisions();
-
-            // Update managers
-            this._foodManager.Update(gameTime);
-
-            // Update effects, particles, other states
-            this._particleManager.Update(gameTime);
         }
 
         protected void CheckCollisions()
@@ -136,7 +143,7 @@ namespace Server
             // used to determine how many new fruits to add
             int pickedFoodCount = 0;
 
-            foreach (Definitions.Snake snake in this._snakes)
+            foreach (Snake snake in this._snakes)
             {
                 if (!snake.HasMoved) continue;
 
@@ -150,7 +157,7 @@ namespace Server
                 }
 
                 // Check against others
-                foreach (Definitions.Snake otherSnake in this._snakes)
+                foreach (Snake otherSnake in this._snakes)
                 {
                     if (otherSnake == snake) continue;
 

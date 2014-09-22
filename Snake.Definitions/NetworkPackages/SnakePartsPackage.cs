@@ -24,8 +24,6 @@ namespace Definitions.NetworkPackages
             package.Write((byte)Type);
             package.Write(Snake.BodyParts.Count);
 
-            Console.WriteLine(Snake.BodyParts.First().Position);
-
             foreach (var bodypart in Snake.BodyParts)
             {
                 package.Write(bodypart.Position.X);
@@ -53,8 +51,6 @@ namespace Definitions.NetworkPackages
                 float y = package.ReadFloat();
                 snakeParts.Add(new SnakePart(new Vector2(x, y)));
             }
-
-            Console.WriteLine(snakeParts.First().Position);
 
             return snakeParts;
         }
