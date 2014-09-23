@@ -37,8 +37,6 @@
   <ItemGroup>
     <Compile Include="Objects\ClientSnake.cs" />
     <Compile Include="Particles\ParticleManager.cs" />
-    <Compile Include="Particles\BaseParticle.cs" />
-    <Compile Include="Particles\ParticleUtil.cs" />
     <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="Direction.cs" />

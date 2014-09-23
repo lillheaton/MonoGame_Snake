@@ -5,6 +5,8 @@ namespace Definitions
     {
         Handshake,
         KeyboardInput,
-        Snake
+        Snake,
+        BaseParticle,
+        FoodPackage
     }
 }

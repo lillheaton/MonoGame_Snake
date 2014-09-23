@@ -6,7 +6,7 @@ namespace Definitions.Particles
     public class ParticleManager
     {
         // particles
-        private List<BaseParticle> _particles;
+        public List<BaseParticle> Particles;
 
         public ParticleManager()
         {
@@ -15,31 +15,31 @@ namespace Definitions.Particles
 
         public void Init()
         {
-            this._particles = new List<BaseParticle>();
+            this.Particles = new List<BaseParticle>();
         }
 
 
         public void Update(GameTime gameTime)
         {
-            for (int i = this._particles.Count; i-- > 0; )
+            for (int i = this.Particles.Count; i-- > 0; )
             {
-                var particle = this._particles[i];
+                var particle = this.Particles[i];
                 particle.Update(gameTime);
 
                 if (!particle.Alive)
                 {
-                    this._particles.RemoveAt(i);
+                    this.Particles.RemoveAt(i);
                 }
             }
         }
 
         public void AddParticle(BaseParticle particle)
         {
-            this._particles.Add(particle);
+            this.Particles.Add(particle);
         }
         public void AddParticles(BaseParticle[] particles)
         {
-            this._particles.AddRange(particles);
+            this.Particles.AddRange(particles);
         }
     }
 }

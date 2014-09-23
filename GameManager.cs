@@ -65,7 +65,6 @@ namespace Client
             this.Snakes = new List<ClientSnake>();
             this._foodManager = new SnakeFood();
             this._particleManager = new ParticleManager(this);
-            this._foodManager.SpawnFood(Snakes);
 
             _networkClientManager = new NetworkClientManager();
             _networkClientManager.Connect();
@@ -89,6 +88,14 @@ namespace Client
                         this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
                     }
                     
+                    break;
+
+                case (byte)PackageType.BaseParticle:
+                    _particleManager.Particles = BaseParticlePackage.Decrypt(incomingData);
+                    break;
+
+                case (byte)PackageType.FoodPackage:
+                    _foodManager.FoodList = FoodPackage.Decrypt(incomingData);
                     break;
             }
         }
@@ -137,7 +144,6 @@ namespace Client
             foreach (ClientSnake snake in Snakes)
             {
                 snake.Draw(spriteBatch);
-                Console.WriteLine(snake.BodyParts.First().Position);
             }
 
             // Draw food

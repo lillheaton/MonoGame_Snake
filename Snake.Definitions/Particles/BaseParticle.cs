@@ -6,9 +6,10 @@ namespace Definitions.Particles
     public class BaseParticle
     {
         // base stats
-        protected Vector2 _position;
+        public  Vector2 Position { get; protected set; }
+        public Vector2 Size { get; protected set; }
+
         protected Vector2 _positionVelocity;
-        protected Vector2 _size;
         protected Vector2 _sizeVelocity;
         protected float _rotation;
         protected float _rotationVelocity;
@@ -24,9 +25,9 @@ namespace Definitions.Particles
 
         public BaseParticle(Vector2 position, Vector2 velocity, Vector2 size, Color color, float liveCount)
         {
-            _position = position;
+            this.Position = position;
             _positionVelocity = velocity;
-            _size = size;
+            this.Size = size;
             _sizeVelocity = Vector2.Zero;
             _rotation = 0.0f;
             _rotationVelocity = 0.0f;
@@ -43,8 +44,8 @@ namespace Definitions.Particles
             {
                 float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                _position += _positionVelocity * elapsed;
-                _size += _sizeVelocity * elapsed;
+                this.Position += _positionVelocity * elapsed;
+                this.Size += _sizeVelocity * elapsed;
                 _rotation += _rotationVelocity * elapsed;
             }
         }

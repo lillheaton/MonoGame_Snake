@@ -10,7 +10,7 @@ namespace Client.Particles
     public class ParticleManager
     {
         // particles
-        private List<BaseParticle> _particles;
+        public List<Rectangle> Particles { get; set; }
 
         // parent
         private GameManager _game;
@@ -24,42 +24,42 @@ namespace Client.Particles
 
         public void Init()
         {
-            this._particles = new List<BaseParticle>();
+            this.Particles = new List<Rectangle>();
         }
 
 
-        public void Update(GameTime gameTime)
-        {
-            for (int i = this._particles.Count; i-- > 0; )
-            {
-                var particle = this._particles[i];
-                particle.Update(gameTime);
+        //public void Update(GameTime gameTime)
+        //{
+        //    for (int i = this.Particles.Count; i-- > 0; )
+        //    {
+        //        var particle = this.Particles[i];
+        //        particle.Update(gameTime);
 
-                if (!particle.Alive)
-                {
-                    this._particles.RemoveAt(i);
-                }
-            }
-        }
+        //        if (!particle.Alive)
+        //        {
+        //            this.Particles.RemoveAt(i);
+        //        }
+        //    }
+        //}
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (BaseParticle particle in this._particles)
+            foreach (Rectangle rect in this.Particles)
             {
-                particle.Draw(spriteBatch);
+                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, Color.Red);
             }
         }
 
 
 
 
-        public void AddParticle(BaseParticle particle)
-        {
-            this._particles.Add(particle);
-        }
-        public void AddParticles(BaseParticle[] particles)
-        {
-            this._particles.AddRange(particles);
-        }
+        //public void AddParticle(BaseParticle particle)
+        //{
+        //    this.Particles.Add(particle);
+        //}
+        //public void AddParticles(BaseParticle[] particles)
+        //{
+        //    this.Particles.AddRange(particles);
+        //}
     }
 }

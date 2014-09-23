@@ -16,7 +16,6 @@ namespace Server
 {
     public class GameManager
     {
-        private static object LockObject = new object();
         public static bool SnakeAlive = true;
 
         // Game state, could be some enum for actual state
@@ -38,7 +37,7 @@ namespace Server
 
         private NetworkServerManager _server;
 
-        private Thread SendPackageThread;
+        private Thread sendPackageThread;
 
         public GameManager()
         {
@@ -55,14 +54,13 @@ namespace Server
 
             // Spoof out a snake
             //this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, );
-            this._foodManager.SpawnFood(_snakes);
 
             _server.Connect();
             _server.NewConnection += _server_NewConnection;
             _server.IncomingDataPackage += _server_IncomingDataPackage;
 
-            SendPackageThread = new Thread(SendPackages);
-            SendPackageThread.Start();
+            this.sendPackageThread = new Thread(SendPackages);
+            this.sendPackageThread.Start();
         }
 
         private void _server_NewConnection(object sender, ConnectionEventArgs e)
@@ -70,6 +68,7 @@ namespace Server
             // New player wants to join the game
             var connection = e.NetConnection;
             this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, connection);
+            this._foodManager.SpawnFood(Snakes);
         }
 
         private void _server_IncomingDataPackage(object sender, PackageEventArgs e)
@@ -85,7 +84,7 @@ namespace Server
                     case PackageType.KeyboardInput:
                         snake.UpdateInput((Direction)incomingPackage.ReadByte());
                         break;
-                }    
+                }
             }
         }
 
@@ -93,19 +92,28 @@ namespace Server
         {
             while (true)
             {
-                while (Snakes.Count > 0)
+                foreach (var snake in Snakes)
                 {
-                    foreach (var snake in Snakes)
+                    foreach (var otherSnakes in Snakes)
                     {
-                        foreach (var otherSnakes in Snakes)
+                        var snakePackage = new SnakePartsPackage(snake);
+                        _server.Send(otherSnakes, snakePackage);
+
+                        if (_particleManager.Particles.Count > 0)
                         {
-                            var snakePackage = new SnakePartsPackage(snake);
-                            _server.Send(otherSnakes, snakePackage);
+                            var particlePackage = new BaseParticlePackage(_particleManager.Particles);
+                            _server.Send(otherSnakes, particlePackage);    
+                        }
+
+                        if (_foodManager.FoodList.Count > 0)
+                        {
+                            var foodPackage = new FoodPackage(_foodManager.FoodList);
+                            _server.Send(otherSnakes, foodPackage);    
                         }
                     }
-
-                    Thread.Sleep(30);
                 }
+
+                Thread.Sleep(30);
             }
         }
 
@@ -119,23 +127,20 @@ namespace Server
 
         public void Update(GameTime gameTime)
         {
-            lock (LockObject)
+            // Update snakes
+            foreach (var snake in _snakes)
             {
-                // Update snakes
-                foreach (var snake in _snakes)
-                {
-                    snake.Update(gameTime);
-                }
-
-                // Update collisions
-                this.CheckCollisions();
-
-                // Update managers
-                this._foodManager.Update(gameTime);
-
-                // Update effects, particles, other states
-                this._particleManager.Update(gameTime);    
+                snake.Update(gameTime);
             }
+
+            // Update collisions
+            this.CheckCollisions();
+
+            // Update managers
+            this._foodManager.Update(gameTime);
+
+            // Update effects, particles, other states
+            this._particleManager.Update(gameTime);
         }
 
         protected void CheckCollisions()
@@ -183,7 +188,7 @@ namespace Server
                     snake.AddPart();
                     ++pickedFoodCount;
 
-                    //ParticleUtil.ParticleExplosion(this._particleManager, snakePosition * SnakePart.Size, ColorUtil.RandomColor());
+                    ParticleUtil.ParticleExplosion(this._particleManager, snakePosition * SnakePart.Size, Color.Red);
                 }
             }
 

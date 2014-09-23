@@ -50,7 +50,6 @@ namespace Client.Network
                     switch (this.IncomingPackage.MessageType)
                     {
                         case NetIncomingMessageType.ConnectionApproval:
-                            Console.WriteLine("skdf");
                             break;
 
                         case NetIncomingMessageType.Data:
