@@ -55,6 +55,8 @@
     <Compile Include="NetworkPackages\InputPackage.cs" />
     <Compile Include="NetworkPackages\IPackage.cs" />
     <Compile Include="NetworkPackages\SnakePartsPackage.cs" />
+    <Compile Include="NetworkPackages\StandardPackage.cs" />
+    <Compile Include="NetworkPackages\StandardPackageData.cs" />
     <Compile Include="PackageType.cs" />
     <Compile Include="Particles\BaseParticle.cs" />
     <Compile Include="Particles\ParticleManager.cs" />

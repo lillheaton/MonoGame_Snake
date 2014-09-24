@@ -102,7 +102,7 @@ namespace Server
                         if (_particleManager.Particles.Count > 0)
                         {
                             var particlePackage = new BaseParticlePackage(_particleManager.Particles);
-                            _server.Send(otherSnakes, particlePackage);    
+                            _server.Send(otherSnakes, particlePackage);
                         }
 
                         if (_foodManager.FoodList.Count > 0)
@@ -113,7 +113,7 @@ namespace Server
                     }
                 }
 
-                Thread.Sleep(30);
+                Thread.Sleep(60);
             }
         }
 
