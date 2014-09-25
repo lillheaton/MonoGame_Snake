@@ -1,12 +1,9 @@
-﻿using Client.Objects;
+﻿using System.Linq;
 
 using Definitions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Client
 {
@@ -15,15 +12,8 @@ namespace Client
         public List<Vector2> FoodList { get; set; }
         public const int FoodSize = Snake.SnakeBodySize;
 
-        private TimeSpan lastUpdateTime;
-        private readonly TimeSpan updatesPerMilliseconds;
-        private readonly Random random;
-
         public SnakeFood()
         {
-            this.updatesPerMilliseconds = TimeSpan.FromMilliseconds(3000);
-            this.random = new Random();
-
             this.Init();
         }
 
@@ -45,6 +35,15 @@ namespace Client
                 Color foodColor = Color.FromNonPremultiplied(75, 0, 130, 255);
                 RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, foodColor);
             }
+        }
+
+        public bool TryPickFoodAtPosition(Vector2 position)
+        {
+            if (FoodList.Any(s => s.Equals(position)))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

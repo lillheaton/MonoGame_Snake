@@ -92,9 +92,7 @@ namespace Client
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
-            this._gameManager.SendKeyBoardInput();
-
-            //this._gameManager.Update(gameTime);
+            this._gameManager.Update(gameTime);
             base.Update(gameTime);
         }
 

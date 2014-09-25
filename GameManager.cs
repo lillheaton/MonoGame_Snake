@@ -33,13 +33,10 @@ namespace Client
         // Snakes
         public List<ClientSnake> Snakes { get; private set; }
 
-
-        private TimeSpan _lastSnakeMoveTime;
-        private TimeSpan _snakeMoveDelayMS = TimeSpan.FromMilliseconds(100.0);
-
-
         // Foods
         private SnakeFood _foodManager;
+
+        private List<Vector2> _explosionPosition; 
 
         // Power ups
         //private PowerUpManager _powerUpManager;
@@ -50,7 +47,8 @@ namespace Client
         // Network
         private NetworkClientManager _networkClientManager;
 
-
+        private TimeSpan _lastSnakeMoveTime;
+        private TimeSpan _snakeMoveDelayMS = TimeSpan.FromMilliseconds(100.0);
 
         public GameManager(SnakeGame game)
         {
@@ -64,61 +62,72 @@ namespace Client
         {
             this.Snakes = new List<ClientSnake>();
             this._foodManager = new SnakeFood();
-            this._particleManager = new ParticleManager(this);
+            this._particleManager = new ParticleManager();
+            this._explosionPosition = new List<Vector2>();
 
             _networkClientManager = new NetworkClientManager();
             _networkClientManager.Connect();
             _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
         }
 
-        private StandardPackageData incoming;
         private void _networkClientManager_IncomingDataPackage(object sender, PackageEventArgs e)
         {
             var incomingData = e.IncomingPackage;
             switch (incomingData.PeekByte())
             {
-                //case (byte)PackageType.Snake:
-                //    var ipAddress = incomingData.SenderEndpoint.Address;
-                //    var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
-                //    if (snake != null)
-                //    {
-                //        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);    
-                //    }
-                //    else
-                //    {
-                //        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
-                //    }
-                    
-                //    break;
-
-                //case (byte)PackageType.BaseParticle:
-                //    _particleManager.Particles = BaseParticlePackage.Decrypt(incomingData);
-                //    break;
-
-                //case (byte)PackageType.FoodPackage:
-                //    _foodManager.FoodList = FoodPackage.Decrypt(incomingData);
-                //    break;
-                case (byte)PackageType.StandardPackage:
-                    incoming = StandardPackage.Decrypt(incomingData);
-                    _foodManager.FoodList = incoming.SnakeFood;
-                    _particleManager.Particles = incoming.Particles;
-                    
+                case (byte)PackageType.Snake:
                     var ipAddress = incomingData.SenderEndpoint.Address;
                     var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
                     if (snake != null)
                     {
-                        snake.BodyParts = incoming.Snakes.Select(s => new SnakePart(s)).ToList();
+                        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);
                     }
                     else
                     {
-                        this.AddSnake(incoming.Snakes.Select(s => new SnakePart(s)).ToList(), Color.Red, ipAddress);
+                        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
                     }
 
+                    break;
+
+                case (byte)PackageType.FoodPackage:
+                    _foodManager.FoodList = FoodPackage.Decrypt(incomingData);
+                    break;
+
+                case (byte)PackageType.Particle:
+                    _explosionPosition = ExplosionsPackage.Decrypt(incomingData);
                     break;
             }
         }
 
-        public void AddSnake(List<SnakePart> bodyPart, Color color, IPAddress ipAddress)
+        public void Update(GameTime gameTime)
+        {
+            this.SendKeyBoardInput();
+
+            if (_explosionPosition.Any())
+            {
+                foreach (var position in _explosionPosition)
+                {
+                    ParticleUtil.ParticleExplosion(_particleManager, position, ColorUtil.RandomColor());
+                }
+
+                _explosionPosition.Clear();
+            }
+
+            //foreach (var snake in Snakes)
+            //{
+            //    var snakePosition = snake.BodyParts.First();
+
+            //    if (_foodManager.TryPickFoodAtPosition(snakePosition))
+            //    {
+            //        ParticleUtil.ParticleExplosion(_particleManager, snakePosition, ColorUtil.RandomColor());
+            //    }
+            //}
+
+            // Update effects, particles, other states
+            this._particleManager.Update(gameTime);
+        }
+
+        public void AddSnake(List<Vector2> bodyPart, Color color, IPAddress ipAddress)
         {
             var snake = new ClientSnake(bodyPart, color, ipAddress);
             this.Snakes.Add(snake);

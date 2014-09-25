@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Lidgren.Network;
+﻿using Lidgren.Network;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Definitions.NetworkPackages
 {
-    public class SnakePartsPackage : IPackage<List<SnakePart>>
+    public class SnakePartsPackage : IPackage<List<Vector2>>
     {
-        public PackageType Type;
         private Snake Snake { get; set; }
 
         public SnakePartsPackage(Snake snake)
         {
-            Type = PackageType.Snake;
             this.Snake = snake;
         }
 
         public NetOutgoingMessage Encrypt(NetPeer peer)
         {
             var package = peer.CreateMessage();
-            package.Write((byte)Type);
+            package.Write((byte)PackageType.Snake);
             package.Write(Snake.BodyParts.Count);
 
             foreach (var bodypart in Snake.BodyParts)
@@ -33,23 +28,23 @@ namespace Definitions.NetworkPackages
             return package;
         }
 
-        List<SnakePart> IPackage<List<SnakePart>>.Decrypt(NetIncomingMessage package)
+        List<Vector2> IPackage<List<Vector2>>.Decrypt(NetIncomingMessage package)
         {
             return Decrypt(package);
         }
 
-        public static List<SnakePart> Decrypt(NetIncomingMessage package)
+        public static List<Vector2> Decrypt(NetIncomingMessage package)
         {
             // Need to read the first byte
             var type = (PackageType)package.ReadByte();
             int numberOfBodyParts = package.ReadInt32();
-            var snakeParts = new List<SnakePart>();
+            var snakeParts = new List<Vector2>();
 
             for (int i = 0; i < numberOfBodyParts; i++)
             {
                 float x = package.ReadFloat();
                 float y = package.ReadFloat();
-                snakeParts.Add(new SnakePart(new Vector2(x, y)));
+                snakeParts.Add(new Vector2(x, y));
             }
 
             return snakeParts;

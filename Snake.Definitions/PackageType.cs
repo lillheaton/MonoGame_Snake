@@ -6,8 +6,7 @@ namespace Definitions
         Handshake,
         KeyboardInput,
         Snake,
-        BaseParticle,
         FoodPackage,
-        StandardPackage
+        Particle
     }
 }

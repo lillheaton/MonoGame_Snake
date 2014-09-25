@@ -1,7 +1,8 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 
-namespace Definitions.Particles
+namespace Client.Particles
 {
     public static class ParticleUtil
     {
