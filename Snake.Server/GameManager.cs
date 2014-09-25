@@ -88,29 +88,38 @@ namespace Server
             }
         }
 
+        private StandardPackage testPackage;
         private void SendPackages()
         {
+            testPackage = new StandardPackage(new StandardPackageData());
+
             while (true)
             {
                 foreach (var snake in Snakes)
                 {
-                    foreach (var otherSnakes in Snakes)
-                    {
-                        var snakePackage = new SnakePartsPackage(snake);
-                        _server.Send(otherSnakes, snakePackage);
+                    testPackage.Data.Snakes = _snakes.SelectMany(s => s.BodyParts.Select(d => d.Position)).ToList();
+                    testPackage.Data.SnakeFood = _foodManager.FoodList;
+                    testPackage.Data.Particles = _particleManager.Particles.Select(s => s.Position).ToList();
 
-                        if (_particleManager.Particles.Count > 0)
-                        {
-                            var particlePackage = new BaseParticlePackage(_particleManager.Particles);
-                            _server.Send(otherSnakes, particlePackage);
-                        }
+                    _server.Send(snake, testPackage);
 
-                        if (_foodManager.FoodList.Count > 0)
-                        {
-                            var foodPackage = new FoodPackage(_foodManager.FoodList);
-                            _server.Send(otherSnakes, foodPackage);    
-                        }
-                    }
+                    //foreach (var otherSnakes in Snakes)
+                    //{
+                    //    var snakePackage = new SnakePartsPackage(snake);
+                    //    _server.Send(otherSnakes, snakePackage);
+
+                    //    if (_particleManager.Particles.Count > 0)
+                    //    {
+                    //        var particlePackage = new BaseParticlePackage(_particleManager.Particles);
+                    //        _server.Send(otherSnakes, particlePackage);
+                    //    }
+
+                    //    if (_foodManager.FoodList.Count > 0)
+                    //    {
+                    //        var foodPackage = new FoodPackage(_foodManager.FoodList);
+                    //        _server.Send(otherSnakes, foodPackage);    
+                    //    }
+                    //}
                 }
 
                 Thread.Sleep(60);

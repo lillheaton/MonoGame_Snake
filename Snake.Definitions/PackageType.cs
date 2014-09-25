@@ -7,6 +7,7 @@ namespace Definitions
         KeyboardInput,
         Snake,
         BaseParticle,
-        FoodPackage
+        FoodPackage,
+        StandardPackage
     }
 }

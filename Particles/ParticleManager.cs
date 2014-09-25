@@ -10,7 +10,7 @@ namespace Client.Particles
     public class ParticleManager
     {
         // particles
-        public List<Rectangle> Particles { get; set; }
+        public List<Vector2> Particles { get; set; }
 
         // parent
         private GameManager _game;
@@ -24,7 +24,7 @@ namespace Client.Particles
 
         public void Init()
         {
-            this.Particles = new List<Rectangle>();
+            this.Particles = new List<Vector2>();
         }
 
 
@@ -44,9 +44,9 @@ namespace Client.Particles
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (Rectangle rect in this.Particles)
+            foreach (Vector2 vector in this.Particles)
             {
-                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, Color.Red);
+                RectangleGraphicsHelper.DrawRectangle(spriteBatch, new Rectangle((int)vector.X, (int)vector.Y, 10, 10), Color.Red);
             }
         }
 

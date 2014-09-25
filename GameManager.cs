@@ -71,31 +71,49 @@ namespace Client
             _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
         }
 
+        private StandardPackageData incoming;
         private void _networkClientManager_IncomingDataPackage(object sender, PackageEventArgs e)
         {
             var incomingData = e.IncomingPackage;
             switch (incomingData.PeekByte())
             {
-                case (byte)PackageType.Snake:
+                //case (byte)PackageType.Snake:
+                //    var ipAddress = incomingData.SenderEndpoint.Address;
+                //    var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
+                //    if (snake != null)
+                //    {
+                //        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);    
+                //    }
+                //    else
+                //    {
+                //        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
+                //    }
+                    
+                //    break;
+
+                //case (byte)PackageType.BaseParticle:
+                //    _particleManager.Particles = BaseParticlePackage.Decrypt(incomingData);
+                //    break;
+
+                //case (byte)PackageType.FoodPackage:
+                //    _foodManager.FoodList = FoodPackage.Decrypt(incomingData);
+                //    break;
+                case (byte)PackageType.StandardPackage:
+                    incoming = StandardPackage.Decrypt(incomingData);
+                    _foodManager.FoodList = incoming.SnakeFood;
+                    _particleManager.Particles = incoming.Particles;
+                    
                     var ipAddress = incomingData.SenderEndpoint.Address;
                     var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
                     if (snake != null)
                     {
-                        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);    
+                        snake.BodyParts = incoming.Snakes.Select(s => new SnakePart(s)).ToList();
                     }
                     else
                     {
-                        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
+                        this.AddSnake(incoming.Snakes.Select(s => new SnakePart(s)).ToList(), Color.Red, ipAddress);
                     }
-                    
-                    break;
 
-                case (byte)PackageType.BaseParticle:
-                    _particleManager.Particles = BaseParticlePackage.Decrypt(incomingData);
-                    break;
-
-                case (byte)PackageType.FoodPackage:
-                    _foodManager.FoodList = FoodPackage.Decrypt(incomingData);
                     break;
             }
         }
