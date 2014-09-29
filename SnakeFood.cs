@@ -10,7 +10,7 @@ namespace Client
     public class SnakeFood
     {
         public List<Vector2> FoodList { get; set; }
-        public const int FoodSize = Snake.SnakeBodySize;
+        public const int FoodSize = BaseSnake.SnakeBodySize;
 
         public SnakeFood()
         {

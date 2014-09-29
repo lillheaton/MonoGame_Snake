@@ -19,7 +19,7 @@ namespace Server
         public static bool SnakeAlive = true;
 
         // Snakes
-        private List<Snake> _snakes;
+        private List<Player> _players;
 
         // Foods
         private SnakeFood _foodManager;
@@ -43,7 +43,7 @@ namespace Server
         public void Init()
         {
             this._server = new NetworkServerManager();
-            this._snakes = new List<Snake>();
+            this._players = new List<Player>();
             this._foodManager = new SnakeFood();
             this._explosions = new List<Vector2>();
 
@@ -60,7 +60,7 @@ namespace Server
             // New player wants to join the game
             var connection = e.NetConnection;
             this.AddSnake(new Vector2(10.0f, 0.0f), SnakeDirection.East, connection);
-            this._foodManager.SpawnFood(_snakes);
+            this._foodManager.SpawnFood(_players);
         }
 
         private void _server_IncomingDataPackage(object sender, PackageEventArgs e)
@@ -68,7 +68,7 @@ namespace Server
             var incomingPackage = e.IncomingPackage;
             if (incomingPackage != null)
             {
-                var snake = _snakes.FirstOrDefault(s => s.Connection == incomingPackage.SenderConnection);
+                var snake = _players.FirstOrDefault(s => s.Connection == incomingPackage.SenderConnection);
                 var packageType = (PackageType)incomingPackage.ReadByte();
 
                 switch (packageType)
@@ -84,9 +84,9 @@ namespace Server
         {
             while (true)
             {
-                foreach (var snake in _snakes)
+                foreach (var snake in _players)
                 {
-                    foreach (var otherSnakes in _snakes)
+                    foreach (var otherSnakes in _players)
                     {
                         var snakePackage = new SnakePartsPackage(snake);
                         _server.Send(otherSnakes, snakePackage);
@@ -112,14 +112,14 @@ namespace Server
 
         public void AddSnake(Vector2 startPosition, SnakeDirection direction, NetConnection connection)
         {
-            var snake = new Snake(startPosition, direction, connection);
-            this._snakes.Add(snake);
+            var snake = new Player(startPosition, direction, connection);
+            this._players.Add(snake);
         }
 
         public void Update(GameTime gameTime)
         {
             // Update snakes
-            foreach (var snake in _snakes)
+            foreach (var snake in _players)
             {
                 snake.Update(gameTime);
             }
@@ -136,25 +136,25 @@ namespace Server
             // used to determine how many new fruits to add
             int pickedFoodCount = 0;
 
-            foreach (Snake snake in this._snakes)
+            foreach (Player snake in this._players)
             {
                 if (!snake.HasMoved) continue;
 
-                var snakePosition = snake.BodyParts[0].Position;
+                var snakePosition = snake.BodyParts[0];
 
                 // Check self collision
-                if (snake.BodyParts.GetRange(1, snake.BodyParts.Count - 1).Any(part => part.Position == snakePosition))
+                if (snake.BodyParts.GetRange(1, snake.BodyParts.Count - 1).Any(part => part == snakePosition))
                 {
                     // self collision
                     snake.SetDead();
                 }
 
                 // Check against others
-                foreach (Snake otherSnake in this._snakes)
+                foreach (Player otherSnake in this._players)
                 {
                     if (otherSnake == snake) continue;
 
-                    if (otherSnake.BodyParts.Any(part => part.Position == snakePosition))
+                    if (otherSnake.BodyParts.Any(part => part == snakePosition))
                     {
                         // hit other snake
                         snake.SetDead();
@@ -182,7 +182,7 @@ namespace Server
 
             while (pickedFoodCount-- > 0)
             {
-                this._foodManager.SpawnFood(this._snakes);
+                this._foodManager.SpawnFood(this._players);
             }
         }
     }

@@ -35,7 +35,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MonoGame_Snake\bin\WindowsGL\Debug\Lidgren.Network.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseSnake.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="EventArguments\ConnectionEventArgs.cs" />
     <Compile Include="EventArguments\PackageEventArgs.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="NetworkPackages\SnakePartsPackage.cs" />
     <Compile Include="PackageType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Snake.cs" />
     <Compile Include="SnakeDirection.cs" />
     <Compile Include="SnakePart.cs" />
   </ItemGroup>

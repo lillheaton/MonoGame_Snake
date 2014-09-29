@@ -71,7 +71,7 @@ namespace Server
             }
         }
 
-        public void Send(Definitions.Snake snake, IBasePackage package)
+        public void Send(Player snake, IBasePackage package)
         {
             this.Server.SendMessage(package.Encrypt(this.Server), snake.Connection, NetDeliveryMethod.ReliableOrdered);
         }

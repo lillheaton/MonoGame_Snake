@@ -10,7 +10,7 @@ namespace Server
     public class SnakeFood
     {
         public List<Vector2> FoodList { get; private set; }
-        public const int FoodSize = Snake.SnakeBodySize;
+        public const int FoodSize = BaseSnake.SnakeBodySize;
 
         private TimeSpan lastUpdateTime;
         private readonly TimeSpan updatesPerMilliseconds;
@@ -39,13 +39,13 @@ namespace Server
             }
         }
 
-        public void SpawnFood(List<Definitions.Snake> snakes)
+        public void SpawnFood(List<Player> players)
         {
-            var newFood = this.GenerateUniqueLocation(snakes);
+            var newFood = this.GenerateUniqueLocation(players);
             FoodList.Add(newFood);
             Console.WriteLine(newFood);
         }
-        private Vector2 GenerateUniqueLocation(List<Definitions.Snake> snakes)
+        private Vector2 GenerateUniqueLocation(List<Player> snakes)
         {
             // TODO: Set this in definitions project
             const int X = 800 / FoodSize;
@@ -53,7 +53,7 @@ namespace Server
             var location = new Vector2(random.Next(X), random.Next(Y));
 
 
-            if (FoodList.Contains(location) || snakes.Any(snake => snake.BodyParts.Any(part => part.Position == location)))
+            if (FoodList.Contains(location) || snakes.Any(snake => snake.BodyParts.Any(part => part == location)))
             {
                 return this.GenerateUniqueLocation(snakes);
             }

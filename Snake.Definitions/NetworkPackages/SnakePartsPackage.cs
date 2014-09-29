@@ -6,9 +6,9 @@ namespace Definitions.NetworkPackages
 {
     public class SnakePartsPackage : IPackage<List<Vector2>>
     {
-        private Snake Snake { get; set; }
+        private BaseSnake Snake { get; set; }
 
-        public SnakePartsPackage(Snake snake)
+        public SnakePartsPackage(BaseSnake snake)
         {
             this.Snake = snake;
         }
@@ -21,8 +21,8 @@ namespace Definitions.NetworkPackages
 
             foreach (var bodypart in Snake.BodyParts)
             {
-                package.Write(bodypart.Position.X);
-                package.Write(bodypart.Position.Y);
+                package.Write(bodypart.X);
+                package.Write(bodypart.Y);
             }
             
             return package;
