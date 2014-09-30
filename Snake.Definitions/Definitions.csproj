@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseSnake.cs" />
+    <Compile Include="Constants\Settings.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="EventArguments\ConnectionEventArgs.cs" />
     <Compile Include="EventArguments\PackageEventArgs.cs" />
+    <Compile Include="NetworkObjects\SnakeData.cs" />
     <Compile Include="NetworkPackages\FoodPackage.cs" />
     <Compile Include="NetworkPackages\HandshakePackage.cs" />
     <Compile Include="NetworkPackages\IBasePackage.cs" />
@@ -59,8 +61,8 @@
     <Compile Include="PackageType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SnakeDirection.cs" />
-    <Compile Include="SnakePart.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

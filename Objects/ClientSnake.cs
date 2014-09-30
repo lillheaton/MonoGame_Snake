@@ -1,23 +1,24 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Definitions;
+using Definitions.NetworkObjects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Net;
 
 namespace Client.Objects
 {
-    public class ClientSnake
+    public class ClientSnake : BaseSnake
     {
         public IPAddress IpAddress { get; set; }
-        public List<Vector2> BodyParts { get; set; }
-        public const int SnakeBodySize = 20;
+        private readonly Color _color;
 
-        private readonly Color color;
-
-        public ClientSnake(List<Vector2> bodyParts, Color color, IPAddress ipAddress)
+        public ClientSnake(SnakeData snakeData, Color color, IPAddress ipAddress)
         {
-            this.color = color;
-            this.IpAddress = ipAddress;
-            BodyParts = bodyParts;
+            _color = color;
+            IpAddress = ipAddress;
+            BodyParts = snakeData.SnakeParts;
+            UpdateTimeStamp = snakeData.UpdateTimeStamp;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -29,10 +30,11 @@ namespace Client.Objects
 
             foreach (var snakePart in BodyParts)
             {
-                rect.X = (int)snakePart.X * SnakeBodySize + margin;
-                rect.Y = (int)snakePart.Y * SnakeBodySize + margin;   
 
-                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, color);
+                rect.X = (int)snakePart.X * SnakeBodySize + margin * (int)(DateTime.Now - UpdateTimeStamp).Ticks;
+                rect.Y = (int)snakePart.Y * SnakeBodySize + margin * (int)(DateTime.Now - UpdateTimeStamp).Ticks;   
+
+                RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, _color);
             }
         }
     }

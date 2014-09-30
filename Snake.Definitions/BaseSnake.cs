@@ -12,6 +12,7 @@ namespace Definitions
         public const int SnakeBodySize = 20;
         public List<Vector2> BodyParts { get; set; }
 
+        public DateTime UpdateTimeStamp { get; set; }
         public bool HasMoved { get; private set; }
         public bool Dead { get { return this.DeadCounter.Ticks > 0; } }
 
@@ -24,12 +25,16 @@ namespace Definitions
         private TimeSpan _lastUpdateTime;
         private readonly TimeSpan _updatesPerMilliseconds;
 
+        public BaseSnake()
+        {
+        }
 
         public BaseSnake(Vector2 position, SnakeDirection direction)
         {
             this.Alive = true;
             Init(position, direction);
             _updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
+            UpdateTimeStamp = DateTime.Now;
         }
 
         protected void Init(Vector2 position, SnakeDirection direction)
@@ -65,6 +70,7 @@ namespace Definitions
                 {
                     _lastUpdateTime -= _updatesPerMilliseconds;
                     UpdatePosition();
+                    UpdateTimeStamp = DateTime.Now;
                 }
             }
         }

@@ -9,6 +9,7 @@ using Client.Particles;
 using Client.Util;
 using Definitions;
 using Definitions.EventArguments;
+using Definitions.NetworkObjects;
 using Definitions.NetworkPackages;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
@@ -80,7 +81,9 @@ namespace Client
                     var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
                     if (snake != null)
                     {
-                        snake.BodyParts = SnakePartsPackage.Decrypt(incomingData);
+                        var snakeData = SnakePartsPackage.Decrypt(incomingData);
+                        snake.UpdateTimeStamp = snakeData.UpdateTimeStamp;
+                        snake.BodyParts = snakeData.SnakeParts;
                     }
                     else
                     {
@@ -127,9 +130,9 @@ namespace Client
             this._particleManager.Update(gameTime);
         }
 
-        public void AddSnake(List<Vector2> bodyPart, Color color, IPAddress ipAddress)
+        public void AddSnake(SnakeData snakeData, Color color, IPAddress ipAddress)
         {
-            var snake = new ClientSnake(bodyPart, color, ipAddress);
+            var snake = new ClientSnake(snakeData, color, ipAddress);
             this.Snakes.Add(snake);
         }
 

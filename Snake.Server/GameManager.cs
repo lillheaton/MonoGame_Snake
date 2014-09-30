@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading;
 
 using Definitions;
+using Definitions.Constants;
 using Definitions.EventArguments;
 using Definitions.NetworkPackages;
 using Lidgren.Network;
@@ -162,8 +163,8 @@ namespace Server
                 }
 
                 // Check map bounds
-                if (snakePosition.X > (800 / SnakePart.Size) || snakePosition.X < 0 ||
-                    snakePosition.Y > (480 / SnakePart.Size) || snakePosition.Y < 0)
+                if (snakePosition.X > (800 / Settings.SnakePartSize) || snakePosition.X < 0 ||
+                    snakePosition.Y > (480 / Settings.SnakePartSize) || snakePosition.Y < 0)
                 {
                     // outside map
                     snake.SetDead();
@@ -176,7 +177,7 @@ namespace Server
                     snake.AddPart();
                     ++pickedFoodCount;
 
-                    this._explosions.Add(snakePosition * SnakePart.Size);
+                    this._explosions.Add(snakePosition * Settings.SnakePartSize);
                 }
             }
 
