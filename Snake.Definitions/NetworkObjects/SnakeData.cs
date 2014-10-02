@@ -8,7 +8,7 @@ namespace Definitions.NetworkObjects
 {
     public class SnakeData
     {
-        public DateTime UpdateTimeStamp { get; set; }
+        public int UpdateId { get; set; }
         public List<Vector2> SnakeParts { get; set; }
 
         public SnakeData()

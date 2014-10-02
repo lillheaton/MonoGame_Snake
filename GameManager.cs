@@ -81,8 +81,8 @@ namespace Client
                     var snake = Snakes.FirstOrDefault(s => s.IpAddress == ipAddress);
                     if (snake != null)
                     {
+
                         var snakeData = SnakePartsPackage.Decrypt(incomingData);
-                        snake.UpdateTimeStamp = snakeData.UpdateTimeStamp;
                         snake.BodyParts = snakeData.SnakeParts;
                     }
                     else
@@ -105,6 +105,11 @@ namespace Client
         public void Update(GameTime gameTime)
         {
             this.SendKeyBoardInput();
+
+            foreach (var clientSnake in Snakes)
+            {
+                clientSnake.Update(gameTime);
+            }
 
             if (_explosionPosition.Any())
             {

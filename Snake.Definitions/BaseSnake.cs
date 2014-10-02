@@ -6,13 +6,19 @@ using Microsoft.Xna.Framework;
 
 namespace Definitions
 {
+    public class TimeFrame
+    {
+        public int Id { get; set; }
+        public List<Vector2> BodyParts { get; set; }
+        public bool Approved { get; set; }
+    }
+
     public class BaseSnake
     {
         public const float RespawnDelayMS = 1000.0f;
         public const int SnakeBodySize = 20;
         public List<Vector2> BodyParts { get; set; }
 
-        public DateTime UpdateTimeStamp { get; set; }
         public bool HasMoved { get; private set; }
         public bool Dead { get { return this.DeadCounter.Ticks > 0; } }
 
@@ -25,16 +31,14 @@ namespace Definitions
         private TimeSpan _lastUpdateTime;
         private readonly TimeSpan _updatesPerMilliseconds;
 
-        public BaseSnake()
-        {
-        }
+        public int UpdateId = 0;
+        protected TimeFrame[] _timeFrames = new TimeFrame[20];
 
         public BaseSnake(Vector2 position, SnakeDirection direction)
         {
             this.Alive = true;
             Init(position, direction);
             _updatesPerMilliseconds = TimeSpan.FromMilliseconds(100);
-            UpdateTimeStamp = DateTime.Now;
         }
 
         protected void Init(Vector2 position, SnakeDirection direction)
@@ -70,8 +74,47 @@ namespace Definitions
                 {
                     _lastUpdateTime -= _updatesPerMilliseconds;
                     UpdatePosition();
-                    UpdateTimeStamp = DateTime.Now;
+                    AddTimeFrame();
                 }
+            }
+        }
+
+        private void AddTimeFrame()
+        {
+            for (int i = 0; i < _timeFrames.Length; i++)
+            {
+                if (_timeFrames[i] == null)
+                {
+                    _timeFrames[i] = new TimeFrame();
+                    _timeFrames[i].BodyParts = BodyParts;
+                    _timeFrames[i].Id = i;
+                }
+
+                if (_timeFrames[i].Id == UpdateId - 1)
+                {
+                    if (i == (_timeFrames.Length - 1))
+                    {
+                        _timeFrames[0].Id = UpdateId;
+                        _timeFrames[0].BodyParts = BodyParts;
+                    }
+                    else
+                    {
+                        _timeFrames[i + 1].Id = UpdateId;
+                        _timeFrames[i].BodyParts = BodyParts;
+                    }
+                }
+            }
+
+            UpdateId++;
+        }
+
+        public void ApproveTimeFrame(int id)
+        {
+            var timeFrame = _timeFrames.FirstOrDefault(s => s.Id == id);
+
+            if (timeFrame != null)
+            {
+                timeFrame.Approved = true;
             }
         }
 

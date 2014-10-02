@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Definitions;
 using Definitions.NetworkObjects;
 using Microsoft.Xna.Framework;
@@ -13,12 +14,11 @@ namespace Client.Objects
         public IPAddress IpAddress { get; set; }
         private readonly Color _color;
 
-        public ClientSnake(SnakeData snakeData, Color color, IPAddress ipAddress)
+        public ClientSnake(SnakeData snakeData, Color color, IPAddress ipAddress) : base(snakeData.SnakeParts.First(), SnakeDirection.East)
         {
             _color = color;
             IpAddress = ipAddress;
             BodyParts = snakeData.SnakeParts;
-            UpdateTimeStamp = snakeData.UpdateTimeStamp;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -30,9 +30,8 @@ namespace Client.Objects
 
             foreach (var snakePart in BodyParts)
             {
-
-                rect.X = (int)snakePart.X * SnakeBodySize + margin * (int)(DateTime.Now - UpdateTimeStamp).Ticks;
-                rect.Y = (int)snakePart.Y * SnakeBodySize + margin * (int)(DateTime.Now - UpdateTimeStamp).Ticks;   
+                rect.X = (int)snakePart.X * SnakeBodySize + margin;
+                rect.Y = (int)snakePart.Y * SnakeBodySize + margin;
 
                 RectangleGraphicsHelper.DrawRectangle(spriteBatch, rect, _color);
             }

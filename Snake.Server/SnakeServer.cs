@@ -1,4 +1,5 @@
 ﻿
+using System.Threading;
 using Microsoft.Xna.Framework;
 using System;
 
@@ -29,6 +30,8 @@ namespace Server
                 
                 // Set latest update to now
                 lastupdate = DateTime.Now;
+
+                Thread.Sleep(30);
             }
         }
     }

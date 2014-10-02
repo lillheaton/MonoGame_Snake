@@ -41,7 +41,6 @@
     <Compile Include="Particles\ParticleUtil.cs" />
     <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Debugger.cs" />
-    <Compile Include="Direction.cs" />
     <Compile Include="Network\NetworkClientManager.cs" />
     <Compile Include="SnakeGame.cs" />
     <Compile Include="GameManager.cs" />

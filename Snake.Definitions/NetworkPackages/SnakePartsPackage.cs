@@ -18,7 +18,7 @@ namespace Definitions.NetworkPackages
         {
             var package = peer.CreateMessage();
             package.Write((byte)PackageType.Snake);
-            package.WriteTime(Snake.UpdateTimeStamp.Ticks, false);
+            package.Write(Snake.UpdateId);
             package.Write(Snake.BodyParts.Count);
 
             foreach (var bodypart in Snake.BodyParts)
@@ -37,10 +37,10 @@ namespace Definitions.NetworkPackages
 
         public static SnakeData Decrypt(NetIncomingMessage package)
         {
-            package.ReadByte();
             var model = new SnakeData();
-            model.UpdateTimeStamp = new DateTime((long)package.ReadTime(false));
 
+            package.ReadByte();
+            model.UpdateId = package.ReadInt32();
             int numberOfBodyParts = package.ReadInt32();            
             for (int i = 0; i < numberOfBodyParts; i++)
             {
