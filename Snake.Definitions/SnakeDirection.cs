@@ -33,7 +33,24 @@ namespace Definitions
             this.direction = snakeDirection.direction;
         }
 
+        public Direction? GetEnumDirection()
+        {
+            switch (direction)
+            {
+                case _north:
+                    return Direction.North;
 
+                case _south:
+                    return Direction.South;
+
+                case _east:
+                    return Direction.East;
+
+                case _west:
+                    return Direction.West;
+            }
+            return null;
+        }
 
         
         public void SetDirection(SnakeDirection snakeDirection)

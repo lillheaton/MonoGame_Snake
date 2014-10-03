@@ -29,7 +29,7 @@ namespace Server
         //private PowerUpManager _powerUpManager;
 
         // Center of particle explosions
-        private List<Vector2> _explosions; 
+        private List<Vector2> _explosions;
 
         // Network manager
         private NetworkServerManager _server;
@@ -69,13 +69,11 @@ namespace Server
             var incomingPackage = e.IncomingPackage;
             if (incomingPackage != null)
             {
-                var snake = _players.FirstOrDefault(s => s.Connection == incomingPackage.SenderConnection);
-                var packageType = (PackageType)incomingPackage.ReadByte();
-
-                switch (packageType)
+                var snake = _players.FirstOrDefault(s => s.Connection == incomingPackage.SenderConnection);                
+                switch ((PackageType)incomingPackage.PeekByte())
                 {
                     case PackageType.KeyboardInput:
-                        snake.UpdateInput((Direction)incomingPackage.ReadByte());
+                        snake.HandleInputChange(InputPackage.Decrypt(incomingPackage));
                         break;
                 }
             }
@@ -85,29 +83,35 @@ namespace Server
         {
             while (true)
             {
-                foreach (var snake in _players)
+                lock (_players)
                 {
-                    foreach (var otherSnakes in _players)
+                    foreach (var snake in _players)
                     {
-                        var snakePackage = new SnakePartsPackage(snake);
-                        _server.Send(otherSnakes, snakePackage);
-
-                        if (this._explosions.Any())
+                        foreach (var otherSnakes in _players)
                         {
-                            var particlesPackage = new ExplosionsPackage(this._explosions);
-                            _server.Send(snake, particlesPackage);
-                            this._explosions.Clear();
-                        }
+                            if (snake.TimeFrames.FirstOrDefault() != null)
+                            {
+                                var snakePackage = new SnakePartsPackage(snake);
+                                _server.Send(otherSnakes, snakePackage);
+                            }
 
-                        if (_foodManager.FoodList.Any())
-                        {
-                            var foodPackage = new FoodPackage(_foodManager.FoodList);
-                            _server.Send(otherSnakes, foodPackage);
+                            if (this._explosions.Any())
+                            {
+                                var particlesPackage = new ExplosionsPackage(this._explosions);
+                                _server.Send(snake, particlesPackage);
+                                this._explosions.Clear();
+                            }
+
+                            if (_foodManager.FoodList.Any())
+                            {
+                                var foodPackage = new FoodPackage(_foodManager.FoodList);
+                                _server.Send(otherSnakes, foodPackage);
+                            }
                         }
                     }
                 }
 
-                Thread.Sleep(30);
+                Thread.Sleep(60);
             }
         }
 
@@ -119,11 +123,15 @@ namespace Server
 
         public void Update(GameTime gameTime)
         {
-            // Update snakes
-            foreach (var snake in _players)
+            lock (_players)
             {
-                snake.Update(gameTime);
+                // Update snakes
+                foreach (var snake in _players)
+                {
+                    snake.Update(gameTime);
+                }        
             }
+            
 
             // Update collisions
             this.CheckCollisions();

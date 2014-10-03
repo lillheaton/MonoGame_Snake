@@ -2,15 +2,23 @@
 
 namespace Definitions.NetworkPackages
 {
-    public class InputPackage : IPackage<Direction>
+    public class InputPackageData
+    {
+        public Direction Direction { get; set; }
+        public int UpdateId { get; set; }
+    }
+
+    public class InputPackage : IPackage<InputPackageData>
     {
         public PackageType Type;
         public Direction Direction { get; set; }
+        public int UpdateId { get; set; }
 
-        public InputPackage(Direction direction)
+        public InputPackage(Direction direction, int updateId)
         {
             this.Direction = direction;
             this.Type = PackageType.KeyboardInput;
+            this.UpdateId = updateId;
         }
 
         public NetOutgoingMessage Encrypt(NetPeer peer)
@@ -18,18 +26,22 @@ namespace Definitions.NetworkPackages
             var package = peer.CreateMessage();
             package.Write((byte)Type);
             package.Write((byte)Direction);
+            package.Write(UpdateId);
             return package;
         }
 
-        Direction IPackage<Direction>.Decrypt(NetIncomingMessage package)
+        InputPackageData IPackage<InputPackageData>.Decrypt(NetIncomingMessage package)
         {
             return Decrypt(package);
         }
 
-        public static Direction Decrypt(NetIncomingMessage package)
+        public static InputPackageData Decrypt(NetIncomingMessage package)
         {
             var type = (PackageType)package.ReadByte();
-            return (Direction)package.ReadByte();            
+            var model = new InputPackageData();
+            model.Direction = (Direction)package.ReadByte();
+            model.UpdateId = package.ReadInt32();
+            return model;
         }
     }
 }

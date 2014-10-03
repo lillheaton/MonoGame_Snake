@@ -51,6 +51,8 @@ namespace Client
         private TimeSpan _lastSnakeMoveTime;
         private TimeSpan _snakeMoveDelayMS = TimeSpan.FromMilliseconds(100.0);
 
+        private IPAddress _myAddress;
+
         public GameManager(SnakeGame game)
         {
             this._game = game;
@@ -69,6 +71,9 @@ namespace Client
             _networkClientManager = new NetworkClientManager();
             _networkClientManager.Connect();
             _networkClientManager.IncomingDataPackage += _networkClientManager_IncomingDataPackage;
+
+            
+            
         }
 
         private void _networkClientManager_IncomingDataPackage(object sender, PackageEventArgs e)
@@ -82,12 +87,16 @@ namespace Client
                     if (snake != null)
                     {
 
-                        var snakeData = SnakePartsPackage.Decrypt(incomingData);
-                        snake.BodyParts = snakeData.SnakeParts;
+                        var timeFrames = SnakePartsPackage.Decrypt(incomingData);
+                        snake.HandleTimeFrames(timeFrames);
                     }
                     else
                     {
-                        this.AddSnake(SnakePartsPackage.Decrypt(incomingData), Color.Red, ipAddress);
+                        var askfa = SnakePartsPackage.Decrypt(incomingData).FirstOrDefault();
+                        if (askfa != null)
+                        {
+                            this.AddSnake(askfa.BodyParts, Color.Red, ipAddress);    
+                        }
                     }
 
                     break;
@@ -135,9 +144,9 @@ namespace Client
             this._particleManager.Update(gameTime);
         }
 
-        public void AddSnake(SnakeData snakeData, Color color, IPAddress ipAddress)
+        public void AddSnake(List<Vector2> bodyParts, Color color, IPAddress ipAddress)
         {
-            var snake = new ClientSnake(snakeData, color, ipAddress);
+            var snake = new ClientSnake(bodyParts, color, ipAddress);
             this.Snakes.Add(snake);
         }
 
@@ -148,22 +157,42 @@ namespace Client
             float epsilon = 0.1f;
             if ((oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left)) || gamePad.ThumbSticks.Left.X < -epsilon)
             {
-                _networkClientManager.Send(new InputPackage(Direction.West));
+                var snake = Snakes.FirstOrDefault();
+                if (snake != null)
+                {
+                    snake.UpdateInput(Direction.West);
+                    _networkClientManager.Send(new InputPackage(Direction.West, snake.UpdateId));
+                }
             }
 
             if ((oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right)) || gamePad.ThumbSticks.Left.X > epsilon)
             {
-                _networkClientManager.Send(new InputPackage(Direction.East));
+                var snake = Snakes.FirstOrDefault();
+                if (snake != null)
+                {
+                    snake.UpdateInput(Direction.East);
+                    _networkClientManager.Send(new InputPackage(Direction.East, snake.UpdateId));
+                }
             }
 
             if ((oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down)) || gamePad.ThumbSticks.Left.Y < -epsilon)
             {
-                _networkClientManager.Send(new InputPackage(Direction.South));
+                var snake = Snakes.FirstOrDefault();
+                if (snake != null)
+                {
+                    snake.UpdateInput(Direction.South);
+                    _networkClientManager.Send(new InputPackage(Direction.South, snake.UpdateId));
+                }
             }
 
             if ((oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up)) || gamePad.ThumbSticks.Left.Y > epsilon)
             {
-                _networkClientManager.Send(new InputPackage(Direction.North));
+                var snake = Snakes.FirstOrDefault();
+                if (snake != null)
+                {
+                    snake.UpdateInput(Direction.North);
+                    _networkClientManager.Send(new InputPackage(Direction.North, snake.UpdateId));
+                }
             }
 
             oldState = newState;

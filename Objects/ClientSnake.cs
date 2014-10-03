@@ -14,11 +14,27 @@ namespace Client.Objects
         public IPAddress IpAddress { get; set; }
         private readonly Color _color;
 
-        public ClientSnake(SnakeData snakeData, Color color, IPAddress ipAddress) : base(snakeData.SnakeParts.First(), SnakeDirection.East)
+        public ClientSnake(List<Vector2> bodyParts, Color color, IPAddress ipAddress) : base(new Vector2(10.0f, 0.0f), SnakeDirection.East)
         {
             _color = color;
             IpAddress = ipAddress;
-            BodyParts = snakeData.SnakeParts;
+        }
+
+        public void HandleTimeFrames(List<TimeFrame> timeFrames)
+        {
+            if (this.TimeFrames.FirstOrDefault() == null)
+            {
+                return;
+            }
+
+            foreach (var timeFrame in timeFrames)
+            {
+                var clientTimeFrame = this.TimeFrames.FirstOrDefault(s => s.Id == timeFrame.Id);
+                if (clientTimeFrame != null)
+                {
+                    clientTimeFrame.Approved = true;
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
